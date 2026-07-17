@@ -7,11 +7,11 @@ export default function App() {
           KATA
         </h1>
         <p className="text-slate-400 text-sm leading-relaxed">
-          Phase 1 done (written by karan 100% no ai)
+          Phase 3 done (written by karan 100% no ai)
         </p>
         <div className="inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 mx-auto">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          Phase 1 completed.
+          Phase 3 completed.
         </div>
       </div>
     </div>

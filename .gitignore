@@ -46,3 +46,7 @@ out/
 .cache/
 tmp/
 temp/
+
+#Postma
+.postman/
+postman/
