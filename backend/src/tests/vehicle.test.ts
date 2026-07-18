@@ -14,15 +14,17 @@ describe('Vehicle CRUD and Inventory Tests', () => {
   let userToken: string;
 
   beforeEach(async () => {
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 1000000);
+
     // Clear databases
     await prisma.vehicle.deleteMany();
-    await prisma.user.deleteMany();
 
     // Create Admin
     adminUser = await prisma.user.create({
       data: {
         name: 'Admin User',
-        email: 'admin@example.com',
+        email: `admin_${timestamp}_${random}@example.com`,
         password: 'hashedpassword',
         role: 'ADMIN',
       },
@@ -33,7 +35,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
     normalUser = await prisma.user.create({
       data: {
         name: 'Normal User',
-        email: 'user@example.com',
+        email: `user_${timestamp}_${random}@example.com`,
         password: 'hashedpassword',
         role: 'USER',
       },

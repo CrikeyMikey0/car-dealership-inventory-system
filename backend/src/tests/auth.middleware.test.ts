@@ -16,14 +16,14 @@ describe('Auth Middleware', () => {
   let testAdmin: User;
 
   beforeEach(async () => {
-    // Clean up database users
-    await prisma.user.deleteMany();
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 1000000);
 
     // Create test users in database
     testUser = await prisma.user.create({
       data: {
         name: 'Normal User',
-        email: 'user@example.com',
+        email: `user_${timestamp}_${random}@example.com`,
         password: 'hashedpassword',
         role: 'USER',
       },
@@ -32,7 +32,7 @@ describe('Auth Middleware', () => {
     testAdmin = await prisma.user.create({
       data: {
         name: 'Admin User',
-        email: 'admin@example.com',
+        email: `admin_${timestamp}_${random}@example.com`,
         password: 'hashedpassword',
         role: 'ADMIN',
       },
