@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import express from 'express';
 import request from 'supertest';
 import { User } from '@prisma/client';
-import { authenticate, authorize } from '../middleware/auth.middleware';
+import { authenticate, authorize } from '../middleware/auth.middleware.js';
 import { generateAccessToken } from '../services/jwt.service';
 import prisma from '../config/database';
 import { errorHandler } from '../middleware/error.middleware';
