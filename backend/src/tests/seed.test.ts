@@ -36,7 +36,7 @@ describe('Database Seed Script', () => {
 
     // Verify seeded Vehicles
     const vehicles = await prisma.vehicle.findMany();
-    expect(vehicles.length).toBe(4);
+    expect(vehicles.length).toBe(5);
     expect(vehicles.some(v => v.make === 'Tesla' && v.model === 'Model 3')).toBe(true);
   }, 15000);
 });

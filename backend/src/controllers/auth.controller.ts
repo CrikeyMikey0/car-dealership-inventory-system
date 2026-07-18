@@ -39,4 +39,18 @@ export class AuthController {
       data: refreshResult,
     });
   };
+
+  /**
+   * Handles POST /api/auth/change-password request.
+   */
+  changePassword = async (req: Request, res: Response): Promise<void> => {
+    // Requires authentication, so req.user will be populated by auth middleware
+    const userId = req.user!.id;
+    await this.authService.changePassword(userId, req.body);
+
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully',
+    });
+  };
 }

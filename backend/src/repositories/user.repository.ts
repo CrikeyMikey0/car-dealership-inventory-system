@@ -28,4 +28,14 @@ export class UserRepository {
       data,
     });
   }
+
+  /**
+   * Updates a user by their unique ID.
+   */
+  async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {
+    return prisma.user.update({
+      where: { id },
+      data,
+    });
+  }
 }

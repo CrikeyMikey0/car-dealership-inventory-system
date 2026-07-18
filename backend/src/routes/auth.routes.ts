@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { AuthController } from '../controllers/auth.controller';
 import { validateBody } from '../middleware/validate.middleware';
-import { registerSchema, loginSchema, refreshSchema } from '../schemas/auth.schema';
+import { authenticate } from '../middleware/auth.middleware';
+import { registerSchema, loginSchema, refreshSchema, changePasswordSchema } from '../schemas/auth.schema';
 import { asyncHandler } from '../utils/async-handler';
 
 const router = Router();
@@ -23,6 +24,13 @@ router.post(
   '/refresh',
   validateBody(refreshSchema),
   asyncHandler(controller.refresh)
+);
+
+router.post(
+  '/change-password',
+  authenticate,
+  validateBody(changePasswordSchema),
+  asyncHandler(controller.changePassword)
 );
 
 export default router;

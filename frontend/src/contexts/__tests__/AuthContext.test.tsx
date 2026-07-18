@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act, renderHook } from '@testing-library/react';
 import { AuthProvider } from '../AuthContext.tsx';
@@ -17,6 +16,7 @@ vi.mock('../../services/token.service', () => ({
 describe('AuthContext & useAuth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   it('should render provider and expose default values', () => {
@@ -42,7 +42,32 @@ describe('AuthContext & useAuth', () => {
     expect(screen.getByTestId('loading').textContent).toBe('false');
   });
 
-  it('should allow login and update state', () => {
+  it('should restore user session from localStorage if token exists', () => {
+    vi.mocked(tokenService.getAccessToken).mockReturnValue('fake-token');
+    const mockUser = { id: '1', name: 'Admin User', email: 'admin@dealership.com', role: 'ADMIN' as const };
+    localStorage.setItem('user', JSON.stringify(mockUser));
+
+    const TestComponent = () => {
+      const { user, isAuthenticated } = useAuth();
+      return (
+        <div>
+          <span data-testid="user">{user?.email}</span>
+          <span data-testid="auth">{isAuthenticated.toString()}</span>
+        </div>
+      );
+    };
+
+    render(
+      <AuthProvider>
+        <TestComponent />
+      </AuthProvider>
+    );
+
+    expect(screen.getByTestId('user').textContent).toBe('admin@dealership.com');
+    expect(screen.getByTestId('auth').textContent).toBe('true');
+  });
+
+  it('should allow login and update state & localStorage', () => {
     const TestComponent = () => {
       const { user, isAuthenticated, login } = useAuth();
       return (
@@ -54,7 +79,7 @@ describe('AuthContext & useAuth', () => {
             onClick={() =>
               login(
                 { accessToken: 'acc', refreshToken: 'ref' },
-                { id: '1', email: 'test@example.com', role: 'admin' }
+                { id: '1', name: 'Admin', email: 'admin@example.com', role: 'ADMIN' }
               )
             }
           >
@@ -76,13 +101,14 @@ describe('AuthContext & useAuth', () => {
       screen.getByTestId('login-btn').click();
     });
 
-    expect(screen.getByTestId('user').textContent).toBe('test@example.com');
+    expect(screen.getByTestId('user').textContent).toBe('admin@example.com');
     expect(screen.getByTestId('auth').textContent).toBe('true');
     expect(tokenService.setAccessToken).toHaveBeenCalledWith('acc');
     expect(tokenService.setRefreshToken).toHaveBeenCalledWith('ref');
+    expect(localStorage.getItem('user')).toContain('admin@example.com');
   });
 
-  it('should allow logout and clear state', () => {
+  it('should allow logout and clear state & localStorage', () => {
     const TestComponent = () => {
       const { user, logout, login } = useAuth();
       return (
@@ -93,7 +119,7 @@ describe('AuthContext & useAuth', () => {
             onClick={() =>
               login(
                 { accessToken: 'acc', refreshToken: 'ref' },
-                { id: '1', email: 'test@example.com', role: 'admin' }
+                { id: '1', name: 'Admin', email: 'admin@example.com', role: 'ADMIN' }
               )
             }
           >
@@ -115,13 +141,14 @@ describe('AuthContext & useAuth', () => {
     act(() => {
       screen.getByTestId('login-btn').click();
     });
-    expect(screen.getByTestId('user').textContent).toBe('test@example.com');
+    expect(screen.getByTestId('user').textContent).toBe('admin@example.com');
 
     act(() => {
       screen.getByTestId('logout-btn').click();
     });
     expect(screen.getByTestId('user').textContent).toBe('no-user');
     expect(tokenService.clearTokens).toHaveBeenCalled();
+    expect(localStorage.getItem('user')).toBeNull();
   });
 
   it('useAuth should throw error outside provider', () => {
@@ -133,12 +160,5 @@ describe('AuthContext & useAuth', () => {
     
     spy.mockRestore();
   });
-
-  it('useAuth should return context values inside provider', () => {
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <AuthProvider>{children}</AuthProvider>
-    );
-    const { result } = renderHook(() => useAuth(), { wrapper });
-    expect(result.current.isAuthenticated).toBe(false);
-  });
 });
+

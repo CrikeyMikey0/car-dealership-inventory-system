@@ -21,6 +21,7 @@ describe('ProtectedRoute', () => {
       isLoading: true,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     render(
@@ -44,11 +45,12 @@ describe('ProtectedRoute', () => {
 
   it('should render children when authenticated', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { id: '1', email: 'test@test.com', role: 'admin' },
+      user: { id: '1', name: 'Admin', email: 'test@test.com', role: 'ADMIN' },
       isAuthenticated: true,
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     render(
@@ -76,6 +78,7 @@ describe('ProtectedRoute', () => {
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     render(
@@ -97,6 +100,36 @@ describe('ProtectedRoute', () => {
     expect(screen.queryByTestId('protected-content')).toBeNull();
     expect(screen.getByTestId('login-page')).toBeInTheDocument();
   });
+
+  it('should redirect user to /403 when user role does not match requiredRole', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: { id: '1', name: 'John Doe', email: 'user@test.com', role: 'USER' },
+      isAuthenticated: true,
+      isLoading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      updateUser: vi.fn(),
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/admin-only']}>
+        <Routes>
+          <Route
+            path="/admin-only"
+            element={
+              <ProtectedRoute requiredRole="ADMIN">
+                <div data-testid="admin-content">Admin Content</div>
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/403" element={<div data-testid="forbidden-page">Forbidden</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.queryByTestId('admin-content')).toBeNull();
+    expect(screen.getByTestId('forbidden-page')).toBeInTheDocument();
+  });
 });
 
 describe('PublicRoute', () => {
@@ -107,6 +140,7 @@ describe('PublicRoute', () => {
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     render(
@@ -129,11 +163,12 @@ describe('PublicRoute', () => {
 
   it('should redirect to dashboard when authenticated', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { id: '1', email: 'test@test.com', role: 'admin' },
+      user: { id: '1', name: 'Admin', email: 'test@test.com', role: 'ADMIN' },
       isAuthenticated: true,
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     render(

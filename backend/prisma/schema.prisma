@@ -30,6 +30,7 @@ model Vehicle {
   category  String
   price     Decimal  @db.Decimal(12, 2)
   quantity  Int
+  imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

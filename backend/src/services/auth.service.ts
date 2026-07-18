@@ -1,13 +1,14 @@
 import { UserRepository } from '../repositories/user.repository';
 import { hashPassword, comparePassword } from '../utils/password';
 import { AppError } from '../errors/app-error';
-import { registerSchema, loginSchema, refreshSchema } from '../schemas/auth.schema';
+import { registerSchema, loginSchema, refreshSchema, changePasswordSchema } from '../schemas/auth.schema';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from './jwt.service';
 import { z } from 'zod';
 
 type RegisterInput = z.infer<typeof registerSchema>;
 type LoginInput = z.infer<typeof loginSchema>;
 type RefreshInput = z.infer<typeof refreshSchema>;
+type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 
 export class AuthService {
   private userRepository = new UserRepository();
@@ -83,5 +84,27 @@ export class AuthService {
       }
       throw new AppError(401, 'Invalid refresh token');
     }
+  }
+
+  /**
+   * Changes the password for an authenticated user.
+   * Throws 401 if current password does not match.
+   */
+  async changePassword(userId: string, input: ChangePasswordInput) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new AppError(404, 'User not found');
+    }
+
+    const isPasswordValid = await comparePassword(input.currentPassword, user.password);
+    if (!isPasswordValid) {
+      throw new AppError(400, 'Incorrect current password');
+    }
+
+    const newPasswordHash = await hashPassword(input.newPassword);
+    
+    // We need an update method in the repository or prisma directly.
+    // Assuming userRepository has an update method, let's use it or Prisma directly
+    await this.userRepository.update(userId, { password: newPasswordHash });
   }
 }

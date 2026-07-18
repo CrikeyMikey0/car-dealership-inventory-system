@@ -10,12 +10,26 @@ vi.mock('../../hooks/useAuth', () => ({
   useAuth: vi.fn(),
 }));
 
+vi.mock('../../contexts/ThemeContext', () => ({
+  useTheme: () => ({ theme: 'light', toggleTheme: vi.fn() }),
+  ThemeProvider: ({ children }: any) => <>{children}</>,
+}));
+
 describe('Layout Components', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('MainLayout renders header, footer, navigation and children', () => {
+  it('MainLayout renders header, footer, navigation and children for guest', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      updateUser: vi.fn(),
+    });
+
     render(
       <MemoryRouter>
         <MainLayout>
@@ -28,15 +42,41 @@ describe('Layout Components', () => {
     expect(screen.getByRole('contentinfo')).toBeInTheDocument();
     expect(screen.getByRole('navigation')).toBeInTheDocument();
     expect(screen.getByTestId('main-child')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /login/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /register/i })).toBeInTheDocument();
   });
 
-  it('DashboardLayout renders sidebar navigation and user identity info', () => {
+  it('MainLayout renders ADMIN specific navigation links', () => {
     vi.mocked(useAuth).mockReturnValue({
-      user: { id: '1', email: 'admin@dealership.com', role: 'admin' },
+      user: { id: '1', name: 'Admin', email: 'admin@dealership.com', role: 'ADMIN' },
       isAuthenticated: true,
       isLoading: false,
       login: vi.fn(),
       logout: vi.fn(),
+      updateUser: vi.fn(),
+    });
+
+    render(
+      <MemoryRouter>
+        <MainLayout>
+          <div>Admin View</div>
+        </MainLayout>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('link', { name: /add vehicle/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /logout/i })).toBeInTheDocument();
+  });
+
+  it('DashboardLayout renders sidebar navigation and user identity info', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: { id: '1', name: 'Admin', email: 'admin@dealership.com', role: 'ADMIN' },
+      isAuthenticated: true,
+      isLoading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      updateUser: vi.fn(),
     });
 
     render(

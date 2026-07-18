@@ -232,4 +232,74 @@ describe('Auth Integration Tests', () => {
       expect(res.body.errors).toBeDefined();
     });
   });
+
+  describe('Change Password (POST /api/auth/change-password)', () => {
+    const user = {
+      name: 'Jane Doe',
+      email: 'jane@example.com',
+      password: 'password123',
+    };
+    let accessToken: string;
+
+    beforeEach(async () => {
+      await request(app).post('/api/auth/register').send(user);
+      const res = await request(app).post('/api/auth/login').send({
+        email: user.email,
+        password: user.password,
+      });
+      accessToken = res.body.data.accessToken;
+    });
+
+    it('should successfully change password with valid current password', async () => {
+      const res = await request(app)
+        .post('/api/auth/change-password')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          currentPassword: 'password123',
+          newPassword: 'newpassword456'
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+
+      // Verify old password no longer works
+      const loginResOld = await request(app).post('/api/auth/login').send({
+        email: user.email,
+        password: 'password123'
+      });
+      expect(loginResOld.status).toBe(401);
+
+      // Verify new password works
+      const loginResNew = await request(app).post('/api/auth/login').send({
+        email: user.email,
+        password: 'newpassword456'
+      });
+      expect(loginResNew.status).toBe(200);
+    });
+
+    it('should reject change password with incorrect current password', async () => {
+      const res = await request(app)
+        .post('/api/auth/change-password')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          currentPassword: 'wrongpassword',
+          newPassword: 'newpassword456'
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.success).toBe(false);
+      expect(res.body.message).toMatch(/incorrect|invalid/i);
+    });
+
+    it('should reject change password if unauthenticated', async () => {
+      const res = await request(app)
+        .post('/api/auth/change-password')
+        .send({
+          currentPassword: 'password123',
+          newPassword: 'newpassword456'
+        });
+
+      expect(res.status).toBe(401);
+    });
+  });
 });

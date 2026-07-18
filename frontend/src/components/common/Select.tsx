@@ -1,12 +1,18 @@
 import React, { forwardRef } from 'react';
 
+export interface SelectOption {
+  label: string;
+  value: string;
+}
+
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
+  options?: SelectOption[];
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, children, className = '', id, ...props }, ref) => {
+  ({ label, error, options, children, className = '', id, ...props }, ref) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
     return (
       <div className="flex flex-col gap-1.5 w-full">
@@ -23,7 +29,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           } rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 transition-all ${className}`}
           {...props}
         >
-          {children}
+          {options
+            ? options.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))
+            : children}
         </select>
         {error && <span className="text-xs font-medium text-rose-400">{error}</span>}
       </div>
