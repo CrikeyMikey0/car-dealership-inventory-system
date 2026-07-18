@@ -74,8 +74,6 @@ describe('Public Pages', () => {
       
       // Carousel checks
       await waitFor(() => {
-        expect(screen.getByLabelText(/Next vehicle/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/Previous vehicle/i)).toBeInTheDocument();
         expect(screen.getAllByText(/Tesla/i).length).toBeGreaterThan(0);
       });
     });

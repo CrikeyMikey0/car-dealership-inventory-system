@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { AppRouter } from '../AppRouter.tsx';
 import { useAuth } from '../../hooks/useAuth.ts';
@@ -18,7 +18,7 @@ describe('AppRouter', () => {
     vi.clearAllMocks();
   });
 
-  it('should render Home Page on "/"', () => {
+  it('should render Home Page on "/"', async () => {
     vi.mocked(useAuth).mockReturnValue({
       user: null,
       isAuthenticated: false,
@@ -34,10 +34,10 @@ describe('AppRouter', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Find Your Dream Vehicle/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Find Your Dream Vehicle/i)).toBeInTheDocument();
   });
 
-  it('should render Login Page on "/login" when unauthenticated', () => {
+  it('should render Login Page on "/login" when unauthenticated', async () => {
     vi.mocked(useAuth).mockReturnValue({
       user: null,
       isAuthenticated: false,
@@ -53,10 +53,12 @@ describe('AppRouter', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Sign In to AutoDrive/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Sign In to AutoDrive/i)).toBeInTheDocument();
+    });
   });
 
-  it('should redirect to dashboard on "/login" when authenticated', () => {
+  it('should redirect to dashboard on "/login" when authenticated', async () => {
     vi.mocked(useAuth).mockReturnValue({
       user: { id: '1', name: 'Admin', email: 'test@test.com', role: 'ADMIN' },
       isAuthenticated: true,
@@ -72,10 +74,12 @@ describe('AppRouter', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Inventory Statistics Overview/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Inventory Statistics Overview/i)).toBeInTheDocument();
+    });
   });
 
-  it('should redirect to login on "/dashboard" when unauthenticated', () => {
+  it('should redirect to login on "/dashboard" when unauthenticated', async () => {
     vi.mocked(useAuth).mockReturnValue({
       user: null,
       isAuthenticated: false,
@@ -91,10 +95,12 @@ describe('AppRouter', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Sign In to AutoDrive/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Sign In to AutoDrive/i)).toBeInTheDocument();
+    });
   });
 
-  it('should render 404 Page on invalid routes', () => {
+  it('should render 404 Page on invalid routes', async () => {
     vi.mocked(useAuth).mockReturnValue({
       user: null,
       isAuthenticated: false,
@@ -110,10 +116,12 @@ describe('AppRouter', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/404/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/404/i)).toBeInTheDocument();
+    });
   });
 
-  it('should redirect non-admin user to 403 on "/vehicles/new"', () => {
+  it('should redirect non-admin user to 403 on "/vehicles/new"', async () => {
     vi.mocked(useAuth).mockReturnValue({
       user: { id: '1', name: 'Regular User', email: 'user@test.com', role: 'USER' },
       isAuthenticated: true,
@@ -129,6 +137,8 @@ describe('AppRouter', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByTestId('forbidden-page')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('forbidden-page')).toBeInTheDocument();
+    });
   });
 });

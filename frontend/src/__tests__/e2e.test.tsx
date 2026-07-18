@@ -61,7 +61,7 @@ describe('End-to-End Workflows', () => {
       renderApp('/');
       
       // Home page assertions
-      expect(screen.getByText(/Browse our curated inventory/i)).toBeInTheDocument();
+      expect(await screen.findByText(/Browse our curated inventory/i)).toBeInTheDocument();
       
       // Guest should see Login and Register links
       const loginLinks = screen.getAllByRole('link', { name: /login/i });

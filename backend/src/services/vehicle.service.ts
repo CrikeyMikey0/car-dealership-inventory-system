@@ -155,11 +155,16 @@ export class VehicleService {
       ];
     }
 
-    return this.vehicleRepository.search(where);
+    return this.vehicleRepository.search(where, 50);
   }
 
   /**
    * Updates vehicle details. Throws 404 if not found.
+   * @param id - The ID of the vehicle to update
+   * @param input - The payload containing updated vehicle fields
+   * @returns The updated vehicle object
+   * @throws AppError 404 if vehicle not found
+   * @throws AppError 400 if price or quantity are invalid
    */
   async updateVehicle(id: string, input: UpdateVehicleInput) {
     const existing = await this.vehicleRepository.findById(id);
@@ -182,6 +187,9 @@ export class VehicleService {
 
   /**
    * Deletes a vehicle. Throws 404 if not found.
+   * @param id - The ID of the vehicle to delete
+   * @returns The deleted vehicle object
+   * @throws AppError 404 if vehicle not found
    */
   async deleteVehicle(id: string) {
     const existing = await this.vehicleRepository.findById(id);
@@ -193,6 +201,12 @@ export class VehicleService {
 
   /**
    * Purchases a vehicle, decreasing its inventory quantity. Enforces business rules.
+   * @param id - The vehicle ID
+   * @param purchaseQuantity - The number of items to purchase
+   * @returns The updated vehicle object with decreased quantity
+   * @throws AppError 400 if purchase quantity is invalid
+   * @throws AppError 404 if vehicle not found
+   * @throws AppError 422 if inventory is insufficient
    */
   async purchaseVehicle(id: string, purchaseQuantity: number) {
     if (purchaseQuantity <= 0) {
@@ -214,6 +228,11 @@ export class VehicleService {
 
   /**
    * Restocks a vehicle, increasing its inventory quantity. Enforces business rules.
+   * @param id - The vehicle ID
+   * @param restockQuantity - The number of items to add to stock
+   * @returns The updated vehicle object with increased quantity
+   * @throws AppError 400 if restock quantity is invalid
+   * @throws AppError 404 if vehicle not found
    */
   async restockVehicle(id: string, restockQuantity: number) {
     if (restockQuantity <= 0) {

@@ -58,7 +58,7 @@ export const Profile: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b border-slate-100 dark:border-slate-800/60">
               <span className="text-slate-500 dark:text-slate-400 font-medium">Joined Date</span>
               <span className="text-slate-900 dark:text-slate-100 font-semibold">
-                {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                {user?.createdAt ? new Intl.DateTimeFormat('en-US', { month: 'long', day: '2-digit', year: 'numeric' }).format(new Date(user.createdAt)) : 'N/A'}
               </span>
             </div>
 

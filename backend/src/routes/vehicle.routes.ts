@@ -8,10 +8,9 @@ import { asyncHandler } from '../utils/async-handler';
 const router = Router();
 const controller = new VehicleController();
 
-// Get all vehicles: authenticated users (USER or ADMIN)
+// Get all vehicles: Public
 router.get(
   '/',
-  asyncHandler(authenticate),
   validateQuery(getVehiclesQuerySchema),
   asyncHandler(controller.getVehicles)
 );
@@ -25,18 +24,16 @@ router.post(
   asyncHandler(controller.createVehicle)
 );
 
-// Search vehicles: authenticated users (USER or ADMIN)
+// Search vehicles: Public
 router.get(
   '/search',
-  asyncHandler(authenticate),
   validateQuery(searchVehiclesQuerySchema),
   asyncHandler(controller.searchVehicles)
 );
 
-// Get vehicle by ID: authenticated users (USER or ADMIN)
+// Get vehicle by ID: Public
 router.get(
   '/:id',
-  asyncHandler(authenticate),
   asyncHandler(controller.getVehicleById)
 );
 

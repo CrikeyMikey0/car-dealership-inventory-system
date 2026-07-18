@@ -148,9 +148,9 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       expect(res.body.data.make).toBe('Honda');
     });
 
-    it('should reject access with 401 Unauthorized when unauthenticated', async () => {
+    it('should successfully retrieve vehicle by ID even when unauthenticated', async () => {
       const res = await request(app).get(`/api/vehicles/${createdVehicleId}`);
-      expect(res.status).toBe(401);
+      expect(res.status).toBe(200);
     });
 
     it('should return 404 Not Found for non-existent vehicle ID', async () => {
@@ -193,9 +193,9 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       expect(res.body.data.totalPages).toBe(3);
     });
 
-    it('should reject access with 401 Unauthorized when unauthenticated', async () => {
+    it('should successfully retrieve vehicles even when unauthenticated', async () => {
       const res = await request(app).get('/api/vehicles');
-      expect(res.status).toBe(401);
+      expect(res.status).toBe(200);
     });
 
     it('should support filtering by make, category, price range, and availability', async () => {
@@ -335,9 +335,9 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       expect(res.body.data).toHaveLength(0);
     });
 
-    it('should reject access with 401 Unauthorized when unauthenticated', async () => {
+    it('should successfully retrieve vehicles even when unauthenticated', async () => {
       const res = await request(app).get('/api/vehicles/search?keyword=toyota');
-      expect(res.status).toBe(401);
+      expect(res.status).toBe(200);
     });
   });
 

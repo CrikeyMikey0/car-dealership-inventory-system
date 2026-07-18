@@ -63,6 +63,7 @@ apiClient.interceptors.response.use(
       if (!refreshToken) {
         tokenService.clearTokens();
         window.dispatchEvent(new Event('auth:unauthorized'));
+        isRefreshing = false;
         return Promise.reject(error);
       }
 

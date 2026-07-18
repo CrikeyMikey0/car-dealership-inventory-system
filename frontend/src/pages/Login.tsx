@@ -21,6 +21,7 @@ export const Login: React.FC = () => {
         response.user
       );
       notify.success(`Welcome back, ${response.user.name || 'User'}!`);
+      window.alert(`Logged in successfully! Welcome back, ${response.user.name || 'User'}!`);
       navigate('/dashboard');
     } catch (err: any) {
       const message = err.response?.data?.message || err.message || 'Login failed. Please check your credentials.';

@@ -47,9 +47,10 @@ export class VehicleRepository {
   /**
    * Searches for vehicles matching where condition.
    */
-  async search(where: Prisma.VehicleWhereInput): Promise<Vehicle[]> {
+  async search(where: Prisma.VehicleWhereInput, take: number = 50): Promise<Vehicle[]> {
     return prisma.vehicle.findMany({
       where,
+      take,
     });
   }
 

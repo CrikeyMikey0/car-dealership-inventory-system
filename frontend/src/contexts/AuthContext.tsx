@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { tokenService } from '../services/token.service';
 import { User } from '../types';
+import { notify } from '../utils/notification';
 
 export interface AuthContextType {
   user: User | null;
@@ -24,6 +25,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const storedUser = localStorage.getItem('user');
         if (token && storedUser) {
           setUser(JSON.parse(storedUser));
+          if (!localStorage.getItem('sessionStartTime')) {
+            localStorage.setItem('sessionStartTime', Date.now().toString());
+          }
         } else if (!token) {
           localStorage.removeItem('user');
         }
@@ -41,13 +45,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     tokenService.setAccessToken(tokens.accessToken);
     tokenService.setRefreshToken(tokens.refreshToken);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('sessionStartTime', Date.now().toString());
     setUser(userData);
   };
 
   const logout = () => {
     tokenService.clearTokens();
     localStorage.removeItem('user');
+    localStorage.removeItem('sessionStartTime');
     setUser(null);
+    notify.info('You have successfully logged out.');
+    window.alert('You have successfully logged out.');
   };
 
   const updateUser = (updatedFields: Partial<User>) => {

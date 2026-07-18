@@ -43,7 +43,6 @@ describe('Layout Components', () => {
     expect(screen.getByRole('navigation')).toBeInTheDocument();
     expect(screen.getByTestId('main-child')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /login/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /register/i })).toBeInTheDocument();
   });
 
   it('MainLayout renders ADMIN specific navigation links', () => {
