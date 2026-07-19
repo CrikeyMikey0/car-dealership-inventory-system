@@ -89,7 +89,7 @@ describe('vehicleService', () => {
 
     const result = await vehicleService.purchaseVehicle('v1', 1);
 
-    expect(apiClient.post).toHaveBeenCalledWith('/vehicles/v1/purchase', { quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'});
+    expect(apiClient.post).toHaveBeenCalledWith('/vehicles/v1/purchase', { quantity: 1 });
     expect(result).toEqual(mockPurchased);
   });
 
@@ -99,7 +99,7 @@ describe('vehicleService', () => {
 
     const result = await vehicleService.restockVehicle('v1', 7);
 
-    expect(apiClient.post).toHaveBeenCalledWith('/vehicles/v1/restock', { quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'});
+    expect(apiClient.post).toHaveBeenCalledWith('/vehicles/v1/restock', { quantity: 7 });
     expect(result).toEqual(mockRestocked);
   });
 });

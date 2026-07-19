@@ -68,7 +68,7 @@ describe('Public Pages', () => {
         </MemoryRouter>
       );
 
-      expect(screen.getByText(/Find Your Dream Vehicle/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Find Your Dream Vehicle/i })).toBeInTheDocument();
       expect(screen.getByText(/Explore Inventory/i)).toBeInTheDocument();
       expect(screen.getByText(/About KATA/i)).toBeInTheDocument();
       

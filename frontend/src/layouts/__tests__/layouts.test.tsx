@@ -18,6 +18,14 @@ vi.mock('../../contexts/ThemeContext', () => ({
 describe('Layout Components', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useAuth).mockReturnValue({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      updateUser: vi.fn(),
+    });
   });
 
   it('MainLayout renders header, footer, navigation and children for guest', () => {
