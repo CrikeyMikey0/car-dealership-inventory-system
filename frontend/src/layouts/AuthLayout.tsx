@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/common/Logo';
+import { FloatingNavbar } from '../components/common/FloatingNavbar';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitl
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMTQ4LCAxNjMsIDE4NCwgMC4xNSkiLz48L3N2Zz4=')] opacity-50 dark:opacity-20" />
       </div>
 
-      <div className="relative z-10 w-full max-w-md space-y-8 flex flex-col items-center justify-center">
+      <div className="relative z-10 w-full max-w-md space-y-8 flex flex-col items-center justify-center pb-20">
         {/* Back to Home & Logo Header */}
         <div className="flex flex-col items-center space-y-4">
           <Link to="/" className="group flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
@@ -43,6 +44,10 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitl
           {children}
         </div>
       </div>
+
+      {/* Floating Bottom Navbar */}
+      <FloatingNavbar />
     </div>
   );
 };
+

@@ -13,6 +13,44 @@ A premium, full-stack vehicle inventory and administration management platform. 
 
 ---
 
+## UI Showcase
+
+Here is a side-by-side comparison of the Light and Dark themes across key pages of the system:
+
+<table width="100%">
+  <thead>
+    <tr>
+      <th align="center" width="50%">☀️ Light Theme</th>
+      <th align="center" width="50%">🌙 Dark Theme</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="2" align="center"><b>Home Page</b></td>
+    </tr>
+    <tr>
+      <td><img src="Screenshots/Light/home.png" alt="Home - Light Theme" width="100%"></td>
+      <td><img src="Screenshots/Dark/home.png" alt="Home - Dark Theme" width="100%"></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center"><b>Vehicles Catalog</b></td>
+    </tr>
+    <tr>
+      <td><img src="Screenshots/Light/vehicles.png" alt="Vehicles - Light Theme" width="100%"></td>
+      <td><img src="Screenshots/Dark/vehicles.png" alt="Vehicles - Dark Theme" width="100%"></td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center"><b>Admin Dashboard</b></td>
+    </tr>
+    <tr>
+      <td><img src="Screenshots/Light/dashboard_admin.png" alt="Admin Dashboard - Light Theme" width="100%"></td>
+      <td><img src="Screenshots/Dark/dashboard_admin.png" alt="Admin Dashboard - Dark Theme" width="100%"></td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
 ## Technical Stack
 
 ### Backend
