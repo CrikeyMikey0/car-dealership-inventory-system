@@ -41,7 +41,7 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <AuthLayout title="Sign In to AutoDrive" subtitle="Enter your credentials to access your dealership account">
+    <AuthLayout title="Sign In to KATA" subtitle="Enter your credentials to access your dealership account">
       <LoginForm onSubmit={handleLoginSubmit} isLoading={isLoading} />
       <div className="mt-6 text-center text-sm text-slate-400">
         Don't have an account?{' '}
