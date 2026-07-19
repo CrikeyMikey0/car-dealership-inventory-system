@@ -84,7 +84,7 @@ describe('End-to-End Workflows', () => {
       
       // Verify navigated to login page
       try {
-        expect(await screen.findByText(/Sign In to AutoDrive/i)).toBeInTheDocument();
+        expect(await screen.findByText(/Sign In to KATA/i)).toBeInTheDocument();
       } catch (e) {
         screen.debug(undefined, 300000);
         throw e;

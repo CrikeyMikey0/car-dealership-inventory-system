@@ -34,7 +34,7 @@ export const Register: React.FC = () => {
   };
 
   return (
-    <AuthLayout title="Create Your Account" subtitle="Join AutoDrive to manage or browse dealership vehicles">
+    <AuthLayout title="Create Your Account" subtitle="Join KATA to manage or browse dealership vehicles">
       <RegisterForm onSubmit={handleRegisterSubmit} isLoading={isLoading} />
       <div className="mt-6 text-center text-sm text-slate-400">
         Already have an account?{' '}

@@ -54,7 +54,7 @@ describe('AppRouter', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Sign In to AutoDrive/i)).toBeInTheDocument();
+      expect(screen.getByText(/Sign In to KATA/i)).toBeInTheDocument();
     });
   });
 
@@ -96,7 +96,7 @@ describe('AppRouter', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Sign In to AutoDrive/i)).toBeInTheDocument();
+      expect(screen.getByText(/Sign In to KATA/i)).toBeInTheDocument();
     });
   });
 
