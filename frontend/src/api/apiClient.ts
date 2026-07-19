@@ -26,6 +26,7 @@ import axios from 'axios';
 import { tokenService } from '../services/token.service';
 
 const API_URL = (import.meta.env.VITE_API_URL || '/api').trim();
+console.log('[KATA apiClient] API_URL resolved to:', API_URL);
 
 /**
  * Shared Axios instance for all API calls.
