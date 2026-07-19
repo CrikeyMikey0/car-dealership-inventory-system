@@ -34,7 +34,10 @@ CREATE DATABASE dealership_db;
 
 ## 2. Environment Configurations
 
-Create a `.env` file in the `backend/` directory:
+The system uses strict Zod validation schema verification at startup. If any required variables are missing or incorrectly typed, the application will display a detailed validation error message and fail to start.
+
+### Backend Configurations
+Create a `.env` file in the `backend/` directory based on `backend/.env.example`:
 
 ```env
 # Database Connection URL (PostgreSQL)
@@ -43,9 +46,27 @@ DATABASE_URL="postgresql://postgres:AdminPassword123!@localhost:5432/dealership_
 
 # JSON Web Token Secret (used for signing access and refresh tokens)
 JWT_SECRET="a_very_secure_long_random_hash_string_for_local_development_jwt"
+JWT_REFRESH_SECRET="another_very_secure_hash_for_refresh_tokens"
 
-# Backend API Port
+# Backend API Port (Defaults to 5000)
 PORT=5000
+
+# Node Environment (development, test, production)
+NODE_ENV="development"
+
+# Bcrypt Salt Hashing Rounds (Defaults to 10)
+BCRYPT_ROUNDS=10
+
+# Allowed CORS Origins (Comma-separated list, required in production)
+FRONTEND_URL="http://localhost:3000"
+```
+
+### Frontend Configurations
+Create a `.env` file in the `frontend/` directory based on `frontend/.env.example`:
+
+```env
+# Configurable API base URL (defaults to '/api' for proxying if empty)
+VITE_API_URL="http://localhost:5000/api"
 ```
 
 ---
@@ -337,3 +358,83 @@ Use this reference to inspect payloads when testing via client tools like **Post
   ```json
   "test": "vitest run src && npx prisma db seed"
   ```
+
+---
+
+## 10. Production Deployment, Build Verification & Monitoring
+
+### A. Production Build Verification
+Before deploying to production, compile and package both the frontend assets and backend server scripts:
+
+1. **Compile Backend**:
+   - Navigate to the `backend/` folder and run:
+     ```bash
+     npm run build
+     ```
+   - This executes `tsc`, producing clean JavaScript compiler output inside `dist/`.
+
+2. **Build Frontend**:
+   - Navigate to the `frontend/` folder and run:
+     ```bash
+     npm run build
+     ```
+   - This checks TypeScript types and bundles optimized static assets into the `dist/` directory.
+
+### B. Health & Uptime Monitoring
+The backend exposes a database-aware health check router. You can target this endpoint using external monitoring tools (e.g., status ping tools, Kubernetes probes):
+- **Path**: `GET /health` (also mapped under `/api/health`)
+- **Success Response (200 OK)**:
+  ```json
+  {
+    "status": "healthy",
+    "database": "connected",
+    "timestamp": "2026-07-19T13:43:42.869Z",
+    "version": "1.0.0"
+  }
+  ```
+- **Failure Response (503 Service Unavailable)**:
+  ```json
+  {
+    "status": "unhealthy",
+    "database": "disconnected",
+    "timestamp": "2026-07-19T13:43:42.869Z",
+    "version": "1.0.0"
+  }
+  ```
+
+### C. Deployment Options & Guides
+
+#### Approach 1: Frontend on Vercel & Backend on Railway/Render (Recommended)
+This splits the serverless static assets from your continuous server instance.
+
+1. **Deploy Backend (Render / Railway)**:
+   - Push your workspace files to GitHub.
+   - Deploy your `backend` directory. Set build command to `npm install && npx prisma generate && npm run build` and start command to `npm run start`.
+   - Provide your environment variables (`DATABASE_URL`, `JWT_SECRET`, `BCRYPT_ROUNDS`, `FRONTEND_URL`).
+
+2. **Deploy Frontend (Vercel)**:
+   - Create a project pointing to your repository. Set root directory to `frontend`.
+   - Add environment variable `VITE_API_URL` pointing to your deployed backend address.
+   - Vercel compiles and serves the client bundle.
+
+#### Approach 2: Full Monorepo Deployment on Vercel
+To run the Express backend on Vercel's serverless nodes, create a `backend/vercel.json` file to route incoming requests to your server entry point:
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/server.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/server.ts"
+    }
+  ]
+}
+```
+Deploy the frontend and backend as two separate Vercel projects pointing to the respective subdirectories. Use the custom environment variables to connect them.
