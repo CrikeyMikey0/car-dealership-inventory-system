@@ -24,7 +24,7 @@ import { env } from '../config/env';
  * @returns A promise that resolves to the bcrypt hash string.
  */
 export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, env.BCRYPT_SALT_ROUNDS);
+  return bcrypt.hash(password, env.BCRYPT_ROUNDS);
 }
 
 /**

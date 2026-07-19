@@ -68,6 +68,13 @@ export function errorHandler(
     }
   }
 
+  // Log the error for internal monitoring / troubleshooting
+  if (statusCode === 500) {
+    console.error('Unhandled internal server error:', err);
+  } else {
+    console.warn(`AppError (${statusCode}): ${message}`, errors ? { errors } : '');
+  }
+
   // Suppress internal details (stack trace) from clients in production
   const isProduction = process.env.NODE_ENV === 'production';
 

@@ -34,7 +34,7 @@ describe('AppRouter', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByText(/Find Your Dream Vehicle/i)).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /Find Your Dream Vehicle/i }, { timeout: 5000 })).toBeInTheDocument();
   });
 
   it('should render Login Page on "/login" when unauthenticated', async () => {

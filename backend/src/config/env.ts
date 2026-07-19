@@ -43,7 +43,9 @@ const envSchema = z.object({
   /** Lifetime of refresh tokens (e.g. "7d"). */
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
   /** Number of bcrypt salt rounds for password hashing. */
-  BCRYPT_SALT_ROUNDS: z.coerce.number().default(10),
+  BCRYPT_ROUNDS: z.coerce.number().default(10),
+  /** Frontend URL(s) allowed to connect via CORS. */
+  FRONTEND_URL: z.string().optional(),
 }).transform((data) => ({
   ...data,
   // Default JWT_REFRESH_SECRET to JWT_SECRET so only one secret is needed

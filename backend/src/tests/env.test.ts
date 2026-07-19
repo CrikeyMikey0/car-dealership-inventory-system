@@ -18,6 +18,8 @@ describe('Environment Variable Validation', () => {
       NODE_ENV: 'test',
       JWT_SECRET: 'supersecret',
       JWT_REFRESH_SECRET: 'refreshsecret',
+      BCRYPT_ROUNDS: '12',
+      FRONTEND_URL: 'http://localhost:3000,https://dealership.com',
     };
 
     const parsed = validateEnv(validConfig);
@@ -28,7 +30,8 @@ describe('Environment Variable Validation', () => {
     expect(parsed.JWT_REFRESH_SECRET).toBe('refreshsecret');
     expect(parsed.JWT_EXPIRES_IN).toBe('15m');
     expect(parsed.JWT_REFRESH_EXPIRES_IN).toBe('7d');
-    expect(parsed.BCRYPT_SALT_ROUNDS).toBe(10);
+    expect(parsed.BCRYPT_ROUNDS).toBe(12);
+    expect(parsed.FRONTEND_URL).toBe('http://localhost:3000,https://dealership.com');
   });
 
   it('should default PORT to 5000 if not provided', () => {

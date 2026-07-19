@@ -11,6 +11,8 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import apiRouter from './routes';
+import healthRouter from './routes/health.routes';
+import { env } from './config/env';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware';
 import { logger } from './middleware/logger.middleware';
 
@@ -19,11 +21,13 @@ import { logger } from './middleware/logger.middleware';
  *
  * Middleware is registered in a deliberate order:
  *  1. Request logger — captures timing data before any parsing happens.
- *  2. CORS — allows cross-origin requests from the configured origins.
- *  3. Body parsers — parses JSON and URL-encoded request bodies.
- *  4. API router — all /api/* routes are delegated here.
- *  5. 404 handler — catches requests that matched no route.
- *  6. Global error handler — formats and returns all thrown errors.
+ *  2. Security headers — sets standard headers (nosniff, frame protection, etc.).
+ *  3. CORS — allows cross-origin requests from the configured origins.
+ *  4. Body parsers — parses JSON and URL-encoded request bodies.
+ *  5. Health check — root level endpoint.
+ *  6. API router — all /api/* routes are delegated here.
+ *  7. 404 handler — catches requests that matched no route.
+ *  8. Global error handler — formats and returns all thrown errors.
  *
  * @returns A fully configured Express application ready to be started.
  */
@@ -34,12 +38,38 @@ export function createApp(): Express {
   // captures the full request lifecycle including parsing overhead.
   app.use(logger);
 
-  // Standard middleware: cross-origin support and body parsing
-  app.use(cors());
+  // Security headers middleware
+  app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    next();
+  });
+
+  // CORS configuration options
+  const allowedOrigins = env.FRONTEND_URL ? env.FRONTEND_URL.split(',').map(o => o.trim()) : [];
+  const corsOptions = {
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      // In non-production environments or if origin is not specified (e.g. same-origin, curl), allow it.
+      if (env.NODE_ENV !== 'production' || !origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  };
+  app.use(cors(corsOptions));
+
+  // Body parsers
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Mount all versioned API routes under the /api prefix
+  // Root-level health endpoint (makes GET /health work)
+  app.use(healthRouter);
+
+  // Mount all versioned API routes under the /api prefix (makes GET /api/health and others work)
   app.use('/api', apiRouter);
 
   // Catch-all for unknown routes — must come after all valid route definitions

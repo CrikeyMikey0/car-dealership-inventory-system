@@ -71,4 +71,9 @@ export async function connectDB(): Promise<void> {
   await prisma.$connect();
 }
 
+export async function closeDB(): Promise<void> {
+  await prisma.$disconnect();
+  await pool.end();
+}
+
 export default prisma;

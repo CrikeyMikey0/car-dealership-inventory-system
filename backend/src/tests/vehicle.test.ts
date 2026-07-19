@@ -59,11 +59,6 @@ describe('Vehicle CRUD and Inventory Tests', () => {
     await prisma.vehicle.deleteMany();
     await prisma.user.deleteMany();
     await prisma.$disconnect();
-    try {
-      execSync('npx prisma db seed', { stdio: 'ignore' });
-    } catch (e) {
-      console.error('Failed to re-seed database in vehicle.test.ts afterAll:', e);
-    }
   });
 
   describe('Create Vehicle (POST /api/vehicles)', () => {

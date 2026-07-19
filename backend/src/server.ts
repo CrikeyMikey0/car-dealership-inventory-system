@@ -13,9 +13,10 @@
 
 import { createApp } from './app';
 import { env } from './config/env';
-import { connectDB } from './config/database';
+import { connectDB, closeDB } from './config/database';
 
 const app = createApp();
+let server: any;
 
 /**
  * Starts the HTTP server after confirming database connectivity.
@@ -31,7 +32,7 @@ async function startServer() {
     await connectDB();
     console.log('Database connection successfully established.');
 
-    app.listen(env.PORT, () => {
+    server = app.listen(env.PORT, () => {
       console.log(`Server is running on port ${env.PORT} in ${env.NODE_ENV} mode`);
     });
   } catch (error) {
@@ -40,5 +41,36 @@ async function startServer() {
     process.exit(1);
   }
 }
+
+/**
+ * Performs a graceful shutdown of the HTTP server and database connections.
+ */
+async function gracefulShutdown(signal: string) {
+  console.log(`Received ${signal}. Starting graceful shutdown...`);
+  if (server) {
+    server.close(async () => {
+      console.log('HTTP server closed.');
+      try {
+        await closeDB();
+        console.log('Database connection closed.');
+        process.exit(0);
+      } catch (err) {
+        console.error('Error during database disconnect:', err);
+        process.exit(1);
+      }
+    });
+
+    // Force close connections after 10 seconds if they are hanging
+    setTimeout(() => {
+      console.error('Could not close connections in time, forcefully shutting down');
+      process.exit(1);
+    }, 10000);
+  } else {
+    process.exit(0);
+  }
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 startServer();

@@ -10,7 +10,10 @@
     "lint": "eslint \"src/**/*.ts\"",
     "test": "vitest run src && npx prisma db seed",
     "test:watch": "vitest src",
-    "test:coverage": "vitest run --coverage src"
+    "test:coverage": "vitest run --coverage src",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "prisma db seed"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",

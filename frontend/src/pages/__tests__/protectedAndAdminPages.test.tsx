@@ -50,6 +50,7 @@ describe('Protected & Admin Pages', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(window, 'confirm').mockImplementation(() => true);
   });
 
   describe('Dashboard Page', () => {
@@ -148,6 +149,7 @@ describe('Protected & Admin Pages', () => {
       fireEvent.change(screen.getByLabelText(/category/i), { target: { value: 'Electric' } });
       fireEvent.change(screen.getByLabelText(/listing price/i), { target: { value: 52000 } });
       fireEvent.change(screen.getByLabelText(/stock quantity/i), { target: { value: 4 } });
+      fireEvent.change(screen.getByLabelText(/image url/i), { target: { value: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800' } });
 
       fireEvent.click(screen.getByRole('button', { name: /add vehicle/i }));
 
@@ -159,7 +161,7 @@ describe('Protected & Admin Pages', () => {
           category: 'Electric',
           price: 52000,
           quantity: 4,
-          imageUrl: '',
+          imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800',
         });
         expect(notify.success).toHaveBeenCalled();
         expect(mockNavigate).toHaveBeenCalledWith('/vehicles');

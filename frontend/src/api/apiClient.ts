@@ -25,12 +25,14 @@
 import axios from 'axios';
 import { tokenService } from '../services/token.service';
 
+const API_URL = import.meta.env.VITE_API_URL || '/api';
+
 /**
  * Shared Axios instance for all API calls.
  * Imported and used by service modules instead of calling `axios` directly.
  */
 export const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: API_URL,
   timeout: 10000, // 10 second timeout to prevent hanging requests
   headers: {
     'Content-Type': 'application/json',
@@ -126,7 +128,10 @@ apiClient.interceptors.response.use(
 
       try {
         // Exchange the refresh token for a new access token
-        const response = await axios.post('/api/auth/refresh', { refreshToken });
+        const refreshUrl = API_URL.endsWith('/api') 
+          ? `${API_URL}/auth/refresh` 
+          : `${API_URL}/api/auth/refresh`;
+        const response = await axios.post(refreshUrl, { refreshToken });
         const { accessToken } = response.data.data;
         
         // Persist the new access token and update default headers

@@ -26,7 +26,7 @@ describe('App Root Component (Route Splitting)', () => {
     
     // Then wait for home page
     await waitFor(() => {
-      expect(screen.getByText(/Find Your Dream Vehicle/i)).toBeInTheDocument();
-    });
+      expect(screen.getByRole('heading', { name: /Find Your Dream Vehicle/i })).toBeInTheDocument();
+    }, { timeout: 5000 });
   });
 });

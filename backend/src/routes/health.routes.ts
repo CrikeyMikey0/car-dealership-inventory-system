@@ -11,20 +11,32 @@
  */
 
 import { Router } from 'express';
+import { prisma } from '../config/database';
 
 const router = Router();
 
 /**
+ * GET /health
  * GET /api/health
  *
- * Returns a 200 response when the server is operational.
- * Does not check database connectivity — use a dedicated readiness
- * probe for that if required.
+ * Returns a 200/503 response check indicating system health and database connectivity.
  */
-router.get('/health', (_req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Server is running',
+router.get('/health', async (_req, res) => {
+  let dbStatus = 'connected';
+  try {
+    // Execute a simple query to verify db connection
+    await prisma.$queryRaw`SELECT 1`;
+  } catch (error) {
+    console.error('Healthcheck DB connection error:', error);
+    dbStatus = 'disconnected';
+  }
+
+  const isHealthy = dbStatus === 'connected';
+  res.status(isHealthy ? 200 : 503).json({
+    status: isHealthy ? 'healthy' : 'unhealthy',
+    database: dbStatus,
+    timestamp: new Date().toISOString(),
+    version: '1.0.0',
   });
 });
 
