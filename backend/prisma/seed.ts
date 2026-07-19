@@ -50,7 +50,7 @@ async function main() {
       model: 'Model 3',
       year: 2023,
       category: 'Electric',
-      price: 42990.00,
+      price: 4299000.00,
       quantity: 3,
       imageUrl: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2071&auto=format&fit=crop'
     },
@@ -59,7 +59,7 @@ async function main() {
       model: 'Mustang',
       year: 2024,
       category: 'Coupe',
-      price: 55500.00,
+      price: 5550000.00,
       quantity: 2,
       imageUrl: 'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?q=80&w=2070&auto=format&fit=crop'
     },
@@ -68,25 +68,27 @@ async function main() {
       model: 'F-150',
       year: 2022,
       category: 'Truck',
-      price: 38500.00,
+      price: 3850000.00,
       quantity: 5,
+      imageUrl: 'https://images.unsplash.com/photo-1559416523-140ddc3d238c?q=80&w=2070&auto=format&fit=crop'
     },
     {
       make: 'Toyota',
       model: 'RAV4',
       year: 2021,
       category: 'SUV',
-      price: 28250.00,
+      price: 2825000.00,
       quantity: 10,
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpxTqjjjXZZfV75V2frnsFk2npg3fLArPpAryJTUZDisBj5nphR0Cmo54&s=10'
     },
     {
       make: 'Honda',
       model: 'Civic',
       year: 2022,
       category: 'Sedan',
-      price: 25000.00,
+      price: 2500000.00,
       quantity: 8,
-      imageUrl: 'https://images.unsplash.com/photo-1590362891991-f700445d3121?q=80&w=2069&auto=format&fit=crop'
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-eCkt0JOF93l5EuqlDCcbHciU_kMiibiw83Wf-fE28e4c1pZ5m_RHkAnguVdDYbzcrdU-S3AtBRqE8UnByailz1B4IKx4SzmwEmR2gw&s'
     },
   ];
 

@@ -1,3 +1,14 @@
+/**
+ * @file auth.routes.test.ts
+ * @description End-to-end integration tests for the authentication API endpoints.
+ *
+ * This suite tests the full request/response cycle for auth routes including:
+ * - User Registration (POST /api/auth/register)
+ * - User Login (POST /api/auth/login)
+ * - Password Reset/Change (PUT /api/auth/password)
+ * It asserts database state changes and HTTP response schemas.
+ */
+
 import { describe, it, expect, beforeEach, afterAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../app';
@@ -5,6 +16,7 @@ import prisma from '../config/database';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env';
 import { UserRepository } from '../repositories/user.repository';
+import { execSync } from 'child_process';
 
 const app = createApp();
 

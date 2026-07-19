@@ -1,3 +1,12 @@
+/**
+ * @file seed.test.ts
+ * @description Integration test for the database seeding script.
+ *
+ * Executes `npm run seed` via a child process and queries the test database
+ * to ensure that initial data (Admin user, standard user, and sample vehicles)
+ * is successfully inserted into the database.
+ */
+
 import { describe, it, expect, afterAll } from 'vitest';
 import { execSync } from 'child_process';
 import prisma from '../config/database';

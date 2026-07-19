@@ -1,3 +1,12 @@
+/**
+ * @file Login.tsx
+ * @description User authentication login page.
+ *
+ * Wraps the `LoginForm` component within the `AuthLayout`. Handles the
+ * API call to authenticate the user and updates the global AuthContext
+ * upon success.
+ */
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthLayout } from '../layouts/AuthLayout';

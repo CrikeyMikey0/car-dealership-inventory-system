@@ -1,12 +1,53 @@
+/**
+ * @file Button.tsx
+ * @description Reusable, accessible button component with multiple variants and states.
+ *
+ * Supports four visual variants, three sizes, a loading state with an inline
+ * spinner, and a full-width mode.  All native `<button>` attributes are
+ * forwarded via spread props.
+ *
+ * @example
+ * <Button variant="primary" size="md" isLoading={isSubmitting}>Submit</Button>
+ * <Button variant="danger" onClick={handleDelete}>Delete</Button>
+ */
+
 import React from 'react';
 
+/**
+ * Props for the `Button` component.
+ * Extends all native `<button>` HTML attributes.
+ */
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /**
+   * Visual style variant.
+   * - `primary`   — Indigo fill (default call-to-action style).
+   * - `secondary` — Slate fill (secondary actions).
+   * - `danger`    — Rose fill (destructive actions).
+   * - `outline`   — Transparent with border (tertiary/ghost style).
+   */
   variant?: 'primary' | 'secondary' | 'danger' | 'outline';
+  /**
+   * Controls the padding and font size.
+   * - `sm` — Compact (e.g. table actions).
+   * - `md` — Standard (default).
+   * - `lg` — Large (prominent CTAs).
+   */
   size?: 'sm' | 'md' | 'lg';
+  /**
+   * When `true`, disables the button and replaces children with an animated
+   * spinner and the text "Loading..." to communicate async activity.
+   */
   isLoading?: boolean;
+  /** When `true`, the button stretches to fill its container's full width. */
   fullWidth?: boolean;
 }
 
+/**
+ * Reusable button component.
+ *
+ * The button is automatically disabled while `isLoading` is `true` or when
+ * the native `disabled` prop is set.
+ */
 export const Button: React.FC<ButtonProps> = ({
   children,
   variant = 'primary',
@@ -17,13 +58,14 @@ export const Button: React.FC<ButtonProps> = ({
   className = '',
   ...props
 }) => {
+  // Base styles shared by all variants
   const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variants = {
     primary: 'bg-indigo-600 hover:bg-indigo-700 text-white focus:ring-indigo-500',
     secondary: 'bg-slate-700 hover:bg-slate-600 text-slate-100 focus:ring-slate-500',
     danger: 'bg-rose-600 hover:bg-rose-700 text-white focus:ring-rose-500',
-    outline: 'bg-transparent border border-slate-700 hover:bg-slate-800 text-slate-300 focus:ring-slate-500',
+    outline: 'bg-transparent border border-slate-300 text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300 focus:ring-slate-500',
   };
 
   const sizes = {
@@ -41,6 +83,7 @@ export const Button: React.FC<ButtonProps> = ({
       {...props}
     >
       {isLoading ? (
+        // Loading state: inline spinner with "Loading..." text
         <span data-testid="spinner" className="flex items-center gap-2">
           <svg
             className="animate-spin h-4 w-4 text-current"

@@ -1,3 +1,14 @@
+/**
+ * @file e2e.test.tsx
+ * @description End-to-end simulated workflow tests.
+ *
+ * Mocks the API services layer to test complex, multi-page user journeys
+ * without requiring a live backend. Covers scenarios like:
+ * - Guest workflow (browsing, searching, navigating to login)
+ * - User workflow (logging in, viewing dashboard, purchasing a vehicle)
+ * - Admin workflow (logging in, creating a vehicle, updating inventory)
+ */
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

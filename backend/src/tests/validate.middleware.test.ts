@@ -1,3 +1,13 @@
+/**
+ * @file validate.middleware.test.ts
+ * @description Unit tests for the request validation middleware.
+ *
+ * Mocks an Express app to verify that `validateBody` correctly parses payloads
+ * against a Zod schema. Asserts that valid payloads are assigned to `req.body`
+ * and invalid payloads are caught, formatted into `ValidationError` instances,
+ * and handled by the global error middleware.
+ */
+
 import express from 'express';
 import request from 'supertest';
 import { z } from 'zod';

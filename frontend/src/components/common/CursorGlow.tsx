@@ -1,5 +1,21 @@
+/**
+ * @file CursorGlow.tsx
+ * @description Decorative cursor glow overlay component.
+ *
+ * Renders a radial gradient that follows the user's mouse cursor across the
+ * entire viewport, creating a subtle glow effect.  The glow colour adapts to
+ * the active theme (indigo in dark mode, slate in light mode).
+ *
+ * The component is `pointer-events-none` so it does not block any interactions.
+ * Returns `null` when the cursor has not moved into the viewport.
+ *
+ * Mounted at the application root level in `App.tsx` so the glow covers the
+ * whole page regardless of the current route.
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
+
 
 export const CursorGlow: React.FC = () => {
   const { theme } = useTheme();
@@ -28,7 +44,7 @@ export const CursorGlow: React.FC = () => {
   const glowColor =
     theme === 'dark'
       ? 'rgba(99, 102, 241, 0.15)' // Indigo glow in dark mode
-      : 'rgba(148, 163, 184, 0.2)'; // Slate glow in light mode
+      : 'rgba(99, 196, 241, 0.25)'; // Soft indigo glow in light mode
 
   return (
     <div

@@ -1,3 +1,11 @@
+/**
+ * @file database.test.ts
+ * @description Unit tests for the Prisma database configuration and connection logic.
+ *
+ * Mocks the Prisma client to verify that the `connectDB` helper function handles
+ * connection success and failure correctly without requiring a real database instance.
+ */
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('@prisma/client', () => {

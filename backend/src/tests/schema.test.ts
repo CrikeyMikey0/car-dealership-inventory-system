@@ -1,6 +1,16 @@
+/**
+ * @file schema.test.ts
+ * @description Integration tests for database schema constraints and relations.
+ *
+ * Direct database tests using Prisma to verify that schema constraints (e.g.,
+ * unique emails, default roles) are enforced at the database level, bypassing
+ * the application logic layer.
+ */
+
 import { describe, it, expect, afterAll, beforeEach } from 'vitest';
 import prisma from '../config/database';
 import { Prisma } from '@prisma/client';
+import { execSync } from 'child_process';
 
 describe('Database Schema Constraints', () => {
   beforeEach(async () => {
@@ -58,6 +68,7 @@ describe('Database Schema Constraints', () => {
       category: 'Sedan',
       price: new Prisma.Decimal(25000.00),
       quantity: 5,
+      imageUrl: 'http://example.com/image.jpg',
     };
 
     const vehicle = await prisma.vehicle.create({ data: vehicleData });
@@ -75,6 +86,7 @@ describe('Database Schema Constraints', () => {
       category: 'Hybrid',
       price: new Prisma.Decimal(-100.00),
       quantity: 2,
+      imageUrl: 'http://example.com/image.jpg',
     };
 
     await expect(prisma.vehicle.create({ data: invalidVehicle })).rejects.toThrow();
@@ -88,6 +100,7 @@ describe('Database Schema Constraints', () => {
       category: 'Sedan',
       price: new Prisma.Decimal(20000.00),
       quantity: -5,
+      imageUrl: 'http://example.com/image.jpg',
     };
 
     await expect(prisma.vehicle.create({ data: invalidVehicle })).rejects.toThrow();

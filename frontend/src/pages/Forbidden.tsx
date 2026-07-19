@@ -1,3 +1,11 @@
+/**
+ * @file Forbidden.tsx
+ * @description HTTP 403 Forbidden error page.
+ *
+ * Displayed when an authenticated user attempts to access a route that
+ * requires a higher privilege level (e.g., a USER trying to access an ADMIN route).
+ */
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/common/Button';

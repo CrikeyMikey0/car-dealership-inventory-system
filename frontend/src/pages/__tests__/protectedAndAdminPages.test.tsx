@@ -56,8 +56,8 @@ describe('Protected & Admin Pages', () => {
     it('displays user profile information, role badge and statistics overview', async () => {
       vi.mocked(vehicleService.getVehicles).mockResolvedValueOnce({
         data: [
-          { id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3 },
-          { id: 'v2', make: 'Ford', model: 'F-150', year: 2022, category: 'Truck', price: 38500, quantity: 0 },
+          { id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'},
+          { id: 'v2', make: 'Ford', model: 'F-150', year: 2022, category: 'Truck', price: 38500, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'},
         ],
         page: 1,
         limit: 100,
@@ -129,7 +129,7 @@ describe('Protected & Admin Pages', () => {
 
   describe('Add Vehicle Page (Admin)', () => {
     it('submits vehicle creation form and navigates to inventory on success', async () => {
-      const mockCreated = { id: 'v3', make: 'BMW', model: 'i4', year: 2023, category: 'Electric', price: 52000, quantity: 4 };
+      const mockCreated = { id: 'v3', make: 'BMW', model: 'i4', year: 2023, category: 'Electric', price: 52000, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'};
       vi.mocked(vehicleService.createVehicle).mockResolvedValueOnce(mockCreated);
 
       render(
@@ -169,7 +169,7 @@ describe('Protected & Admin Pages', () => {
 
   describe('Edit Vehicle Page (Admin)', () => {
     it('loads existing vehicle and updates fields on submission', async () => {
-      const mockVehicle = { id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3 };
+      const mockVehicle = { id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'};
       vi.mocked(vehicleService.getVehicleById).mockResolvedValueOnce(mockVehicle);
       vi.mocked(vehicleService.updateVehicle).mockResolvedValueOnce({ ...mockVehicle, price: 44000 });
 

@@ -1,3 +1,12 @@
+/**
+ * @file logger.test.ts
+ * @description Unit tests for the request logging middleware.
+ *
+ * Spies on `console.log` to ensure that incoming HTTP requests trigger
+ * the custom logging format (METHOD PATH STATUS duration ms) without
+ * breaking the request lifecycle.
+ */
+
 import express from 'express';
 import request from 'supertest';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

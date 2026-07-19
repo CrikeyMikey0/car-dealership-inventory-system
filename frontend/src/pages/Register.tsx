@@ -1,3 +1,12 @@
+/**
+ * @file Register.tsx
+ * @description User registration page.
+ *
+ * Wraps the `RegisterForm` component within the `AuthLayout`. Handles the
+ * API call to create a new user account and redirects to the login page
+ * upon success.
+ */
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthLayout } from '../layouts/AuthLayout';

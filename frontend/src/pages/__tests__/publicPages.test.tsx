@@ -11,7 +11,7 @@ import { notify } from '../../utils/notification';
 vi.mock('../../services/vehicle.service', () => ({
   vehicleService: {
     getVehicles: vi.fn().mockResolvedValue({ data: [], page: 1, limit: 10, total: 0, totalPages: 0 }),
-    getVehicleById: vi.fn().mockResolvedValue({ id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3 }),
+    getVehicleById: vi.fn().mockResolvedValue({ id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'}),
     searchVehicles: vi.fn().mockResolvedValue([]),
     purchaseVehicle: vi.fn(),
     restockVehicle: vi.fn(),
@@ -51,8 +51,8 @@ describe('Public Pages', () => {
     it('renders hero section, call to action, statistics, and about section', async () => {
       vi.mocked(vehicleService.getVehicles).mockResolvedValue({
         data: [
-          { id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3 },
-          { id: 'v2', make: 'Ford', model: 'Mustang', year: 2022, category: 'Coupe', price: 35000, quantity: 2 }
+          { id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'},
+          { id: 'v2', make: 'Ford', model: 'Mustang', year: 2022, category: 'Coupe', price: 35000, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'}
         ],
         page: 1,
         limit: 4,
@@ -83,8 +83,8 @@ describe('Public Pages', () => {
     it('fetches vehicles and displays search bar, filter controls and pagination', async () => {
       const mockData = {
         data: [
-          { id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3 },
-          { id: 'v2', make: 'Ford', model: 'F-150', year: 2022, category: 'Truck', price: 38500, quantity: 5 },
+          { id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'},
+          { id: 'v2', make: 'Ford', model: 'F-150', year: 2022, category: 'Truck', price: 38500, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'},
         ],
         page: 1,
         limit: 10,
@@ -111,7 +111,7 @@ describe('Public Pages', () => {
 
     it('triggers search when keyword filter is typed', async () => {
       const mockData = {
-        data: [{ id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3 }],
+        data: [{ id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'}],
         page: 1,
         limit: 10,
         total: 1,
@@ -139,9 +139,9 @@ describe('Public Pages', () => {
 
   describe('VehicleDetails Page', () => {
     it('fetches vehicle specs and allows purchasing', async () => {
-      const mockVehicle = { id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3 };
+      const mockVehicle = { id: 'v1', make: 'Tesla', model: 'Model 3', year: 2023, category: 'Electric', price: 42990, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'};
       vi.mocked(vehicleService.getVehicleById).mockResolvedValue(mockVehicle);
-      vi.mocked(vehicleService.purchaseVehicle).mockResolvedValue({ ...mockVehicle, quantity: 2 });
+      vi.mocked(vehicleService.purchaseVehicle).mockResolvedValue({ ...mockVehicle, quantity: 3, imageUrl: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800'});
 
       render(
         <MemoryRouter initialEntries={['/vehicles/v1']}>

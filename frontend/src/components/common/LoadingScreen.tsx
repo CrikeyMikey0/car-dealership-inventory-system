@@ -1,4 +1,19 @@
+/**
+ * @file LoadingScreen.tsx
+ * @description Full-screen loading overlay component.
+ *
+ * Renders a fixed, backdrop-blurred overlay with an animated spinner and
+ * an optional status message.  Used for full-page loading states such as
+ * initial data fetching or async page transitions.
+ *
+ * The root `<div>` has `data-testid="loading-screen"` for test targeting.
+ *
+ * @example
+ * {isLoading && <LoadingScreen message="Fetching vehicles..." />}
+ */
+
 import React from 'react';
+
 import { Spinner } from './Spinner';
 
 export interface LoadingScreenProps {

@@ -1,3 +1,11 @@
+/**
+ * @file Profile.tsx
+ * @description User profile overview page.
+ *
+ * Displays the currently authenticated user's details (name, email, role)
+ * and provides navigation links to edit the profile or change the password.
+ */
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
@@ -5,13 +13,30 @@ import { Badge } from '../components/common/Badge';
 import { Button } from '../components/common/Button';
 import { useAuth } from '../hooks/useAuth';
 
+/**
+ * User profile overview page.
+ *
+ * Displays the currently authenticated user's details (name, email, role).
+ * It uses the `AuthContext` to retrieve user information and provides navigation
+ * links to edit the profile, change the password, or log out of the application.
+ *
+ * @returns {React.FC} The Profile page wrapped in `MainLayout`.
+ */
 export const Profile: React.FC = () => {
+  // Retrieve the current user object and the logout function from context
   const { user, logout } = useAuth();
+  
+  // React Router hook to programmatically navigate after logging out
   const navigate = useNavigate();
 
+  /**
+   * Clears the user session and redirects to the login page.
+   */
   const handleLogout = () => {
-    logout();
-    navigate('/login');
+    if (window.confirm('Are you sure you want to log out?')) {
+      logout();
+      navigate('/login');
+    }
   };
 
   return (

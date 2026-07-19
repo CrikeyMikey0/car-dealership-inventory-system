@@ -1,3 +1,14 @@
+/**
+ * @file VehicleDetails.tsx
+ * @description Detailed view for a single vehicle.
+ *
+ * Fetches and displays comprehensive information about a specific vehicle.
+ * Provides distinct actions based on the user's role:
+ * - Guests: Prompted to log in to purchase.
+ * - Users: Can purchase the vehicle (opens a purchase modal).
+ * - Admins: Can edit, delete, or restock the vehicle.
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
@@ -13,29 +24,53 @@ import { formatCurrency } from '../utils/format';
 import { notify } from '../utils/notification';
 import { Vehicle } from '../types';
 
+/**
+ * Detailed view for a single vehicle.
+ *
+ * This component fetches and displays comprehensive information about a specific vehicle
+ * based on the URL ID parameter. It provides context-aware actions based on the
+ * authenticated user's role (e.g., Purchase for Users, Edit/Delete/Restock for Admins).
+ * It also manages complex modal states for confirmations and transactions.
+ *
+ * @returns {React.FC} The Vehicle Details page wrapped in `MainLayout`.
+ */
 export const VehicleDetails: React.FC = () => {
+  // Extract the vehicle ID from the react-router URL parameters
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  // Retrieve the authenticated user context to handle role-based UI and authentication gates
   const { user, isAuthenticated } = useAuth();
 
+  // --- Core State ---
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Purchase Modal state
+  // --- Modal & Action State ---
+
+  // Controls the visibility of the vehicle deletion confirmation modal
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+
+  // Controls the visibility of the vehicle purchase form modal
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState<boolean>(false);
-  const [purchaseQuantity, setPurchaseQuantity] = useState<number>(1);
-  const [isSubmittingPurchase, setIsSubmittingPurchase] = useState<boolean>(false);
 
   // Restock Modal state (Admin)
   const [isRestockModalOpen, setIsRestockModalOpen] = useState<boolean>(false);
   const [restockQuantity, setRestockQuantity] = useState<number>(5);
   const [isSubmittingRestock, setIsSubmittingRestock] = useState<boolean>(false);
 
-  // Delete Confirmation Modal state (Admin)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+  // Tracks the quantity selected in the purchase modal
+  const [purchaseQuantity, setPurchaseQuantity] = useState<number>(1);
+
+  // Tracks active API calls to prevent double-submissions and show loading spinners
+  const [isSubmittingPurchase, setIsSubmittingPurchase] = useState<boolean>(false);
   const [isSubmittingDelete, setIsSubmittingDelete] = useState<boolean>(false);
 
+  /**
+   * Effect hook to fetch the specific vehicle details when the component mounts
+   * or when the `id` parameter changes.
+   */
   const fetchVehicleDetails = async () => {
     if (!id) return;
     setIsLoading(true);
@@ -43,6 +78,25 @@ export const VehicleDetails: React.FC = () => {
     try {
       const data = await vehicleService.getVehicleById(id);
       setVehicle(data);
+      try {
+        const stored = localStorage.getItem('recentlyViewed');
+        let list = stored ? JSON.parse(stored) : [];
+        list = list.filter((item: any) => item.id !== data.id);
+        list.unshift({
+          id: data.id,
+          make: data.make,
+          model: data.model,
+          category: data.category,
+          price: data.price,
+          year: data.year,
+          imageUrl: data.imageUrl,
+          timestamp: Date.now()
+        });
+        list = list.slice(0, 5);
+        localStorage.setItem('recentlyViewed', JSON.stringify(list));
+      } catch (e) {
+        console.error('Error updating recently viewed:', e);
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load vehicle details.');
     } finally {
@@ -54,6 +108,12 @@ export const VehicleDetails: React.FC = () => {
     fetchVehicleDetails();
   }, [id]);
 
+  /**
+   * Handles the purchase flow for standard users.
+   * Validates the requested quantity against available stock and submits the
+   * purchase API call. Refreshes the local vehicle state upon success to reflect
+   * the updated inventory count.
+   */
   const handlePurchaseSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id || !vehicle) return;
@@ -123,15 +183,15 @@ export const VehicleDetails: React.FC = () => {
             </Link>
             {user?.role === 'ADMIN' && (
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => setIsRestockModalOpen(true)}>
-                  Restock Inventory
+                <Button variant="outline" size="md" onClick={() => setIsRestockModalOpen(true)}>
+                  Add Stock
                 </Button>
                 <Link to={`/vehicles/${vehicle.id}/edit`}>
-                  <Button variant="primary" size="sm">
+                  <Button variant="primary" size="md">
                     Edit Vehicle
                   </Button>
                 </Link>
-                <Button variant="danger" size="sm" onClick={() => setIsDeleteModalOpen(true)}>
+                <Button variant="danger" size="md" onClick={() => setIsDeleteModalOpen(true)}>
                   Delete
                 </Button>
               </div>
@@ -142,23 +202,11 @@ export const VehicleDetails: React.FC = () => {
           <div className="bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl transition-colors">
             {/* Image Banner */}
             <div className="h-64 sm:h-96 w-full bg-slate-100 dark:bg-slate-800 relative flex items-center justify-center overflow-hidden">
-              {vehicle.imageUrl ? (
-                <img 
-                  src={vehicle.imageUrl} 
-                  alt={`${vehicle.make} ${vehicle.model}`} 
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                    (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
-              ) : null}
-              <div className={`absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 ${vehicle.imageUrl ? 'hidden' : ''}`}>
-                <svg className="w-16 h-16 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span className="font-medium">No Image Available</span>
-              </div>
+              <img
+                src={vehicle.imageUrl}
+                alt={`${vehicle.make} ${vehicle.model}`}
+                className="w-full h-full object-cover"
+              />
             </div>
 
             <div className="p-6 sm:p-10 space-y-8">
@@ -194,16 +242,16 @@ export const VehicleDetails: React.FC = () => {
                   <p className="text-xs text-slate-500 font-semibold">Year</p>
                   <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">{vehicle.year}</p>
                 </div>
-              <div>
-                <p className="text-xs text-slate-500 font-semibold">Stock Availability</p>
-                <div className="mt-1">
-                  {vehicle.quantity > 0 ? (
-                    <Badge variant="success">{vehicle.quantity} Available</Badge>
-                  ) : (
-                    <Badge variant="danger">Out of Stock</Badge>
-                  )}
+                <div>
+                  <p className="text-xs text-slate-500 font-semibold">Stock Availability</p>
+                  <div className="mt-1">
+                    {vehicle.quantity > 0 ? (
+                      <Badge variant="success">{vehicle.quantity} Available</Badge>
+                    ) : (
+                      <Badge variant="danger">Out of Stock</Badge>
+                    )}
+                  </div>
                 </div>
-              </div>
               </div>
 
               {/* Action Bar */}

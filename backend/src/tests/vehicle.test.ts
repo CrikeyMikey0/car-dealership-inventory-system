@@ -1,9 +1,21 @@
+/**
+ * @file vehicle.test.ts
+ * @description End-to-end integration tests for vehicle endpoints.
+ *
+ * Comprehensively tests the vehicle inventory lifecycle including:
+ * - Pagination, filtering, and sorting (GET /api/vehicles)
+ * - Admin-only CRUD operations (POST, PUT, DELETE)
+ * - Purchasing logic and concurrent stock reduction (POST /api/vehicles/:id/purchase)
+ * - Restocking logic (POST /api/vehicles/:id/restock)
+ */
+
 import { describe, it, expect, beforeEach, afterAll } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../app';
 import prisma from '../config/database';
 import { generateAccessToken } from '../services/jwt.service';
 import { User } from '@prisma/client';
+import { execSync } from 'child_process';
 
 const app = createApp();
 
@@ -47,6 +59,11 @@ describe('Vehicle CRUD and Inventory Tests', () => {
     await prisma.vehicle.deleteMany();
     await prisma.user.deleteMany();
     await prisma.$disconnect();
+    try {
+      execSync('npx prisma db seed', { stdio: 'ignore' });
+    } catch (e) {
+      console.error('Failed to re-seed database in vehicle.test.ts afterAll:', e);
+    }
   });
 
   describe('Create Vehicle (POST /api/vehicles)', () => {
@@ -56,7 +73,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       year: 2022,
       category: 'Sedan',
       price: 25000,
-      quantity: 5,
+      quantity: 3, imageUrl: 'https://example.com/image.jpg',
     };
 
     it('should successfully create a new vehicle when authorized as ADMIN', async () => {
@@ -130,7 +147,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
           year: 2021,
           category: 'Sedan',
           price: 22000,
-          quantity: 3,
+          quantity: 3, imageUrl: 'https://example.com/image.jpg',
         },
       });
       createdVehicleId = v.id;
@@ -170,11 +187,11 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       // Seed several vehicles for pagination, filtering and sorting
       await prisma.vehicle.createMany({
         data: [
-          { make: 'Toyota', model: 'Corolla', year: 2020, category: 'Sedan', price: 20000, quantity: 4 },
-          { make: 'Toyota', model: 'RAV4', year: 2021, category: 'SUV', price: 30000, quantity: 2 },
-          { make: 'Honda', model: 'Civic', year: 2022, category: 'Sedan', price: 22000, quantity: 0 }, // Out of stock
-          { make: 'Ford', model: 'Mustang', year: 2019, category: 'Coupe', price: 35000, quantity: 1 },
-          { make: 'Ford', model: 'F-150', year: 2020, category: 'Truck', price: 40000, quantity: 5 },
+          { make: 'Toyota', model: 'Corolla', year: 2020, category: 'Sedan', price: 20000, quantity: 3, imageUrl: 'https://example.com/image.jpg'},
+          { make: 'Toyota', model: 'RAV4', year: 2021, category: 'SUV', price: 30000, quantity: 3, imageUrl: 'https://example.com/image.jpg'},
+          { make: 'Honda', model: 'Civic', year: 2022, category: 'Sedan', price: 22000, quantity: 0, imageUrl: 'https://example.com/image.jpg'}, // Out of stock
+          { make: 'Ford', model: 'Mustang', year: 2019, category: 'Coupe', price: 35000, quantity: 3, imageUrl: 'https://example.com/image.jpg'},
+          { make: 'Ford', model: 'F-150', year: 2020, category: 'Truck', price: 40000, quantity: 3, imageUrl: 'https://example.com/image.jpg'},
         ],
       });
     });
@@ -250,9 +267,9 @@ describe('Vehicle CRUD and Inventory Tests', () => {
     beforeEach(async () => {
       await prisma.vehicle.createMany({
         data: [
-          { make: 'Toyota', model: 'Corolla', year: 2020, category: 'Sedan', price: 20000, quantity: 4 },
-          { make: 'Honda', model: 'Civic', year: 2022, category: 'Sedan', price: 22000, quantity: 3 },
-          { make: 'Ford', model: 'Mustang', year: 2019, category: 'Coupe', price: 35000, quantity: 1 },
+          { make: 'Toyota', model: 'Corolla', year: 2020, category: 'Sedan', price: 20000, quantity: 3, imageUrl: 'https://example.com/image.jpg'},
+          { make: 'Honda', model: 'Civic', year: 2022, category: 'Sedan', price: 22000, quantity: 3, imageUrl: 'https://example.com/image.jpg'},
+          { make: 'Ford', model: 'Mustang', year: 2019, category: 'Coupe', price: 35000, quantity: 3, imageUrl: 'https://example.com/image.jpg'},
         ],
       });
     });
@@ -352,7 +369,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
           year: 2018,
           category: 'Sedan',
           price: 15000,
-          quantity: 2,
+          quantity: 3, imageUrl: 'https://example.com/image.jpg',
         },
       });
       createdVehicleId = v.id;
@@ -364,7 +381,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           price: 16500,
-          quantity: 3,
+          quantity: 3, imageUrl: 'https://example.com/image.jpg',
         });
 
       expect(res.status).toBe(200);
@@ -425,7 +442,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
           year: 2017,
           category: 'Sedan',
           price: 12000,
-          quantity: 1,
+          quantity: 3, imageUrl: 'https://example.com/image.jpg',
         },
       });
       createdVehicleId = v.id;
@@ -484,7 +501,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
           year: 2021,
           category: 'Sedan',
           price: 45000,
-          quantity: 3,
+          quantity: 4, imageUrl: 'https://example.com/image.jpg',
         },
       });
       createdVehicleId = v.id;
@@ -494,7 +511,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       const res = await request(app)
         .post(`/api/vehicles/${createdVehicleId}/purchase`)
         .set('Authorization', `Bearer ${userToken}`)
-        .send({ quantity: 2 });
+        .send({ quantity: 3 });
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
@@ -510,7 +527,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
     it('should reject access with 401 Unauthorized when unauthenticated', async () => {
       const res = await request(app)
         .post(`/api/vehicles/${createdVehicleId}/purchase`)
-        .send({ quantity: 1 });
+        .send({ quantity: 3 });
 
       expect(res.status).toBe(401);
     });
@@ -536,7 +553,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       const res = await request(app)
         .post(`/api/vehicles/${createdVehicleId}/purchase`)
         .set('Authorization', `Bearer ${userToken}`)
-        .send({ quantity: 4 }); // exceeds 3
+        .send({ quantity: 5 }); // exceeds 4
 
       expect(res.status).toBe(422);
       expect(res.body.success).toBe(false);
@@ -548,7 +565,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       const res = await request(app)
         .post(`/api/vehicles/${nonExistentId}/purchase`)
         .set('Authorization', `Bearer ${userToken}`)
-        .send({ quantity: 1 });
+        .send({ quantity: 3 });
 
       expect(res.status).toBe(404);
     });
@@ -565,7 +582,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
           year: 2021,
           category: 'Hybrid',
           price: 28000,
-          quantity: 2,
+          quantity: 4, imageUrl: 'https://example.com/image.jpg',
         },
       });
       createdVehicleId = v.id;
@@ -575,7 +592,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       const res = await request(app)
         .post(`/api/vehicles/${createdVehicleId}/restock`)
         .set('Authorization', `Bearer ${adminToken}`)
-        .send({ quantity: 5 });
+        .send({ quantity: 3 });
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
@@ -592,7 +609,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       const res = await request(app)
         .post(`/api/vehicles/${createdVehicleId}/restock`)
         .set('Authorization', `Bearer ${userToken}`)
-        .send({ quantity: 5 });
+        .send({ quantity: 3 });
 
       expect(res.status).toBe(403);
     });
@@ -600,7 +617,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
     it('should reject access with 401 Unauthorized when unauthenticated', async () => {
       const res = await request(app)
         .post(`/api/vehicles/${createdVehicleId}/restock`)
-        .send({ quantity: 5 });
+        .send({ quantity: 3 });
 
       expect(res.status).toBe(401);
     });
@@ -626,7 +643,7 @@ describe('Vehicle CRUD and Inventory Tests', () => {
       const res = await request(app)
         .post(`/api/vehicles/${nonExistentId}/restock`)
         .set('Authorization', `Bearer ${adminToken}`)
-        .send({ quantity: 5 });
+        .send({ quantity: 3 });
 
       expect(res.status).toBe(404);
     });

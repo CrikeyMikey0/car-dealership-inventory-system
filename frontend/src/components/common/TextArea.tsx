@@ -1,4 +1,17 @@
+/**
+ * @file TextArea.tsx
+ * @description Multi-line text area component with optional label and error display.
+ *
+ * Mirrors the API of the `Input` component but renders a `<textarea>` element.
+ * Includes the same styling, label auto-linking, error state, and `forwardRef`
+ * support as `Input.tsx`.
+ *
+ * @example
+ * <TextArea label="Description" rows={4} placeholder="Enter vehicle details..." error={errors.description} />
+ */
+
 import React, { forwardRef } from 'react';
+
 
 export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;

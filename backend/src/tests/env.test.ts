@@ -1,3 +1,12 @@
+/**
+ * @file env.test.ts
+ * @description Unit tests for environment variable validation logic.
+ *
+ * Ensures that the application's Zod schema correctly parses valid configurations
+ * and throws descriptive errors when required environment variables are missing
+ * or malformed (e.g., non-numeric port, missing secret).
+ */
+
 import { describe, it, expect } from 'vitest';
 import { validateEnv } from '../config/env';
 

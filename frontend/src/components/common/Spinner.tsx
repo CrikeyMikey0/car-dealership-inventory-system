@@ -1,4 +1,18 @@
+/**
+ * @file Spinner.tsx
+ * @description Animated loading spinner SVG component.
+ *
+ * Renders a circular SVG spinner with an indigo colour and a CSS
+ * `animate-spin` rotation animation.  Used by `LoadingScreen` and can be
+ * embedded in any context where an inline loading indicator is needed.
+ *
+ * @example
+ * <Spinner size="lg" />
+ * <Spinner className="h-8 w-8 text-white" />
+ */
+
 import React from 'react';
+
 
 export interface SpinnerProps {
   className?: string;

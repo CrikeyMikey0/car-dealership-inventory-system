@@ -1,3 +1,11 @@
+/**
+ * @file EditVehicle.tsx
+ * @description Page for updating an existing vehicle's details.
+ *
+ * Fetches the vehicle by ID from the URL parameters, pre-fills the `VehicleForm`,
+ * and handles the PUT request to save changes. Accessible only to ADMIN users.
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';

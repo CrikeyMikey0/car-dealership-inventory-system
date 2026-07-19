@@ -1,5 +1,15 @@
+/**
+ * @file auth.middleware.test.ts
+ * @description Integration tests for authentication and authorization middleware.
+ *
+ * This test suite sets up a mock Express application to verify that the
+ * `authenticate` and `authorize` middleware functions correctly protect routes.
+ * It tests various scenarios including missing tokens, invalid tokens,
+ * expired tokens, and role-based access control (RBAC).
+ */
+
 // Integration tests for authentication and authorization middleware
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterAll } from 'vitest';
 import express from 'express';
 import request from 'supertest';
 import { User } from '@prisma/client';
@@ -9,6 +19,7 @@ import prisma from '../config/database';
 import { errorHandler } from '../middleware/error.middleware';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env';
+import { execSync } from 'child_process';
 
 describe('Auth Middleware', () => {
   let testApp: express.Express;
@@ -18,6 +29,9 @@ describe('Auth Middleware', () => {
   beforeEach(async () => {
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 1000000);
+
+    // Clean database first
+    await prisma.user.deleteMany();
 
     // Create test users in database
     testUser = await prisma.user.create({
@@ -156,5 +170,10 @@ describe('Auth Middleware', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
     });
+  });
+
+  afterAll(async () => {
+    await prisma.user.deleteMany();
+    await prisma.$disconnect();
   });
 });

@@ -1,3 +1,12 @@
+/**
+ * @file auth.utils.test.ts
+ * @description Unit tests for authentication and password utilities.
+ *
+ * Verifies the correctness of cryptographic operations such as password hashing
+ * (bcrypt) and JWT generation/verification (jsonwebtoken). Ensures that valid
+ * payloads succeed and invalid/expired tokens fail gracefully.
+ */
+
 // Unit tests for authentication and password utilities
 import { describe, it, expect } from 'vitest';
 import { generateAccessToken, verifyAccessToken, generateRefreshToken, verifyRefreshToken } from '../services/jwt.service';

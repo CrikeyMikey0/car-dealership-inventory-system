@@ -1,3 +1,12 @@
+/**
+ * @file App.test.tsx
+ * @description Unit tests for the root App component.
+ *
+ * Verifies that the application renders without crashing and correctly handles
+ * initial routing and lazy-loading states (e.g., displaying a loading fallback
+ * before the home page is ready).
+ */
+
 import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import App from '../App';

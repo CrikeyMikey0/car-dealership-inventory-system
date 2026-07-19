@@ -1,4 +1,17 @@
+/**
+ * @file ErrorMessage.tsx
+ * @description Inline error message banner component.
+ *
+ * Displays a rose-coloured alert banner with a warning emoji icon and a text
+ * message.  Used throughout the application to surface API errors, form
+ * submission failures, and other user-facing error states.
+ *
+ * @example
+ * {error && <ErrorMessage message={error} />}
+ */
+
 import React from 'react';
+
 
 export interface ErrorMessageProps {
   message: string;

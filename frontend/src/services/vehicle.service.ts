@@ -1,3 +1,17 @@
+/**
+ * @file vehicle.service.ts
+ * @description Frontend HTTP service for vehicle inventory API calls.
+ *
+ * Wraps all vehicle-related API endpoints exposed by the backend.
+ * All methods use the shared `apiClient` Axios instance which handles
+ * automatic JWT token attachment, and token refresh on 401 responses.
+ *
+ * Access levels:
+ *  - `getVehicles`, `getVehicleById`, `searchVehicles` — public (no auth required).
+ *  - `purchaseVehicle` — requires authentication (any role).
+ *  - `createVehicle`, `updateVehicle`, `deleteVehicle`, `restockVehicle` — ADMIN only.
+ */
+
 import apiClient from '../api/apiClient';
 import {
   Vehicle,

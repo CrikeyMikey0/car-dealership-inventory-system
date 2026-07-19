@@ -1,3 +1,12 @@
+/**
+ * @file error.test.ts
+ * @description Integration tests for global error handling middleware.
+ *
+ * Mocks an Express server to throw different types of errors (AppError, standard Error,
+ * 404 Not Found) and asserts that the `errorHandler` middleware catches them and
+ * formats the JSON response correctly, respecting the NODE_ENV for stack traces.
+ */
+
 import express from 'express';
 import request from 'supertest';
 import { describe, it, expect, vi } from 'vitest';

@@ -1,12 +1,37 @@
+/**
+ * @file ContactUs.tsx
+ * @description Static "Contact Us" page with a mock contact form.
+ *
+ * Displays dealership contact information and a form for users to send
+ * inquiries. The form submission is simulated via a timeout.
+ */
+
 import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
 import { notify } from '../utils/notification';
 
+/**
+ * Static "Contact Us" page with a mock contact form.
+ *
+ * Displays dealership contact information and a form for users to send
+ * inquiries. The form submission is simulated via a timeout to demonstrate
+ * UI loading states without requiring a backend endpoint for messages.
+ *
+ * @returns {React.FC} The Contact Us page wrapped in `MainLayout`.
+ */
 export const ContactUs: React.FC = () => {
+  // State to manage the loading spinner on the submit button
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  /**
+   * Handles the submission of the contact form.
+   * Prevents default form action, simulates network latency with a setTimeout,
+   * then displays a success notification and resets the form via DOM API.
+   * 
+   * @param {React.FormEvent} e - The form submission event.
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -87,7 +112,7 @@ export const ContactUs: React.FC = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/50">
+          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 sm:p-8 border border-indigo-200 dark:border-indigo-900/50 shadow-[0_0_25px_rgba(99,102,241,0.15)] dark:shadow-[0_0_30px_rgba(99,102,241,0.25)] transition-all">
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Send us a Message</h3>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

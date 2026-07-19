@@ -1,3 +1,11 @@
+/**
+ * @file ChangePassword.tsx
+ * @description Page for changing the currently authenticated user's password.
+ *
+ * Renders a form with fields for the current password, new password, and
+ * password confirmation. Validates input using Zod and React Hook Form.
+ */
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';

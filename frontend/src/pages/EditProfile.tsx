@@ -1,3 +1,11 @@
+/**
+ * @file EditProfile.tsx
+ * @description Page for editing the currently authenticated user's profile.
+ *
+ * Currently serves as a UI placeholder for profile editing functionality.
+ * Renders a form with the user's name and email, pre-filled from the auth context.
+ */
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';

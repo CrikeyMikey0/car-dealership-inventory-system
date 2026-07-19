@@ -1,35 +1,35 @@
+/**
+ * @file MainLayout.tsx
+ * @description Primary public-facing layout with a floating bottom navigation bar.
+ *
+ * Wraps all public and most authenticated pages.  Provides:
+ *  - A centred logo header at the top of the page.
+ *  - A gradient background with decorative blurred shapes.
+ *  - A scrollable main content area.
+ *  - A footer with copyright information.
+ *  - A floating, pill-shaped bottom navigation bar that adapts based on
+ *    authentication state (shows Dashboard/Logout for authenticated users,
+ *    Login for unauthenticated users, and an Add Vehicle link for ADMINs).
+ *  - An inline dark/light theme toggle button within the navigation bar.
+ *
+ * Used by all pages except dashboard/admin pages (which use `DashboardLayout`)
+ * and auth pages (which use `AuthLayout`).
+ */
+
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../contexts/ThemeContext';
+import { Link } from 'react-router-dom';
 import { Logo } from '../components/common/Logo';
+import { FloatingNavbar } from '../components/common/FloatingNavbar';
 
+/**
+ * Public-facing application shell with a floating bottom navigation bar.
+ *
+ * @param props.children - The page content to render in the main content area.
+ */
 export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, isAuthenticated, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const isActive = (path: string) => {
-    if (path === '/' && location.pathname === '/') return true;
-    if (path !== '/' && location.pathname.startsWith(path)) return true;
-    return false;
-  };
-
-  const navItemClass = (path: string) =>
-    `flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 rounded-xl md:rounded-full transition-all duration-300 ${
-      isActive(path)
-        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 scale-105'
-        : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
-    }`;
 
   return (
-    <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 overflow-x-hidden">
+    <div className="relative min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 overflow-x-hidden">
       {/* Premium Background Pattern */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-indigo-500/10 blur-[100px]" />
@@ -39,8 +39,8 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
       </div>
 
       {/* Top Header - Centered Logo */}
-      <header role="banner" className="relative z-10 pt-8 pb-4 flex justify-center items-center">
-        <Link to="/" className="flex flex-col items-center gap-2 group hover:opacity-90 transition-opacity">
+      <header role="banner" className="relative z-10 py-4 flex justify-center items-center border-b border-indigo-400 dark:border-indigo-500 shadow-[0_2px_15px_-3px_rgba(99,102,241,0.5)] bg-white/50 dark:bg-slate-950/50 backdrop-blur-md">
+        <Link to="/" className="flex flex-col items-center gap-1 group hover:opacity-60 transition-opacity">
           <Logo />
           <span className="text-2xl font-black tracking-widest text-slate-900 dark:text-white uppercase group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
             KATA
@@ -49,77 +49,60 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full transition-colors duration-300 pb-32">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full transition-colors duration-300">
         {children}
       </main>
 
-      {/* Footer (Reduced since nav is bottom) */}
-      <footer role="contentinfo" className="relative z-10 border-t border-slate-200/50 dark:border-slate-800/50 bg-transparent py-8 text-center text-sm text-slate-500 mb-20 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto px-4 space-y-2">
-          <p className="font-medium text-slate-600 dark:text-slate-400">&copy; 2026 KATA</p>
-          <p>Created by Karan</p>
+      {/* Footer */}
+      <footer role="contentinfo" className="relative border-t border-indigo-400 dark:border-indigo-500 shadow-[0_-2px_15px_-3px_rgba(99,102,241,0.5)] bg-slate-100/50 dark:bg-slate-900/30 pt-12 pb-24 transition-colors duration-300 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div className="space-y-4 col-span-1 md:col-span-2">
+              <div className="flex items-center gap-2">
+                <Logo />
+                <span className="text-xl font-black tracking-widest text-slate-900 dark:text-white uppercase">KATA</span>
+              </div>
+              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs leading-relaxed">
+                Premier car dealership platform offering a seamless and modern car buying experience. Find your dream vehicle today.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Inventory</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/vehicles" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">All Vehicles</Link></li>
+                <li><Link to="/vehicles?category=Electric" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Electric</Link></li>
+                <li><Link to="/vehicles?category=SUV" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">SUVs</Link></li>
+                <li><Link to="/vehicles?category=Sedan" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Sedans</Link></li>
+                <li><Link to="/vehicles?category=Coupe" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Coupe</Link></li>
+                <li><Link to="/vehicles?category=Truck" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Truck</Link></li>
+              </ul>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Company</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/about" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">About Us</Link></li>
+                <li><Link to="/contact" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Contact</Link></li>
+                <li><Link to="/privacy" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Terms of Service</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-indigo-200 dark:border-indigo-800/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+            <p className="text-xs text-slate-400 dark:text-slate-500">
+              &copy; {new Date().getFullYear()} KATA Dealership. All rights reserved.
+            </p>
+            <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
+              Created by <a href="https://www.linkedin.com/in/karandave0/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline">Karan</a>
+            </p>
+          </div>
         </div>
       </footer>
 
       {/* Floating Bottom Navbar */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-[95%] max-w-fit">
-        <nav className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xl shadow-slate-900/10 dark:shadow-black/40 rounded-full px-2 py-2 md:px-4 md:py-3 flex items-center justify-center gap-1 md:gap-2">
-          <Link to="/" className={navItemClass('/')}>
-            <span className="md:hidden text-lg">🏠</span>
-            <span className="hidden md:inline font-semibold text-sm">Home</span>
-          </Link>
-          <Link to="/vehicles" className={navItemClass('/vehicles')}>
-            <span className="md:hidden text-lg">🚗</span>
-            <span className="hidden md:inline font-semibold text-sm">Vehicles</span>
-          </Link>
-          <Link to="/about" className={navItemClass('/about')}>
-            <span className="md:hidden text-lg">ℹ️</span>
-            <span className="hidden md:inline font-semibold text-sm">About Us</span>
-          </Link>
-          <Link to="/contact" className={navItemClass('/contact')}>
-            <span className="md:hidden text-lg">📞</span>
-            <span className="hidden md:inline font-semibold text-sm">Contact Us</span>
-          </Link>
-
-          <div className="w-px h-8 bg-slate-300 dark:bg-slate-700 mx-1 md:mx-2 hidden sm:block"></div>
-
-          {isAuthenticated ? (
-            <>
-              <Link to="/dashboard" className={navItemClass('/dashboard')}>
-                <span className="md:hidden text-lg">📊</span>
-                <span className="hidden md:inline font-semibold text-sm">Dashboard</span>
-              </Link>
-              {user?.role === 'ADMIN' && (
-                <Link to="/vehicles/new" className={navItemClass('/vehicles/new')}>
-                  <span className="md:hidden text-lg">➕</span>
-                  <span className="hidden md:inline font-semibold text-sm">Add Vehicle</span>
-                </Link>
-              )}
-              <button
-                onClick={handleLogout}
-                className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 rounded-xl md:rounded-full transition-all duration-300 text-rose-500 hover:text-white hover:bg-rose-500"
-              >
-                <span className="md:hidden text-lg">🚪</span>
-                <span className="hidden md:inline font-semibold text-sm">Logout</span>
-              </button>
-            </>
-          ) : (
-            <Link to="/login" className={navItemClass('/login')}>
-              <span className="md:hidden text-lg">👤</span>
-              <span className="hidden md:inline font-semibold text-sm">Login</span>
-            </Link>
-          )}
-
-          {/* Theme Toggle Button inline in navbar */}
-          <button
-            onClick={toggleTheme}
-            className="flex flex-col items-center justify-center w-12 h-12 md:w-auto md:h-auto md:px-4 md:py-2 rounded-xl md:rounded-full transition-all duration-300 text-slate-500 hover:text-amber-500 hover:bg-amber-100 dark:hover:text-amber-400 dark:hover:bg-slate-800"
-            aria-label="Toggle Theme"
-          >
-            <span className="text-lg">{theme === 'light' ? '🌙' : '☀️'}</span>
-          </button>
-        </nav>
-      </div>
+      <FloatingNavbar />
     </div>
   );
 };

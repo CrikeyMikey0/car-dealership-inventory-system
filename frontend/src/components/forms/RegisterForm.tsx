@@ -1,3 +1,12 @@
+/**
+ * @file RegisterForm.tsx
+ * @description User registration form component.
+ *
+ * Renders name, email, and password fields. Validates input against
+ * `registerSchema` (Zod) before triggering the `onSubmit` callback.
+ * Displays validation errors and a loading state during submission.
+ */
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

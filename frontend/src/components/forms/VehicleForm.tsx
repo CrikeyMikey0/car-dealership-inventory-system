@@ -1,3 +1,12 @@
+/**
+ * @file VehicleForm.tsx
+ * @description Form component for creating or updating a vehicle record.
+ *
+ * Provides a comprehensive form with fields for make, model, year, category,
+ * price, quantity, and an optional image URL. Includes a real-time image
+ * preview. Shared by both the AddVehicle and EditVehicle pages.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,7 +23,7 @@ const vehicleSchema = z.object({
   category: z.string().trim().min(1, 'Category is required'),
   price: z.coerce.number().min(0, 'Price cannot be negative'),
   quantity: z.coerce.number().int().min(0, 'Quantity cannot be negative'),
-  imageUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  imageUrl: z.string().url('Must be a valid URL').min(1, 'Image URL is required'),
 });
 
 interface VehicleFormProps {
@@ -133,7 +142,7 @@ export const VehicleForm: React.FC<VehicleFormProps> = ({
 
         <div className="sm:col-span-2 space-y-2">
           <Input
-            label="Image URL (Optional)"
+            label="Image URL"
             placeholder="https://example.com/image.jpg"
             error={(errors as any).imageUrl?.message}
             {...register('imageUrl' as any)}

@@ -1,3 +1,12 @@
+/**
+ * @file AddVehicle.tsx
+ * @description Page for adding a new vehicle to the inventory.
+ *
+ * Provides a form interface for ADMIN users to create a new vehicle record.
+ * Uses the reusable `VehicleForm` component and submits data via the
+ * `vehicleService`.
+ */
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';

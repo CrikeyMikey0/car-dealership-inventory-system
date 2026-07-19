@@ -1,4 +1,17 @@
+/**
+ * @file Logo.tsx
+ * @description KATA brand logo component.
+ *
+ * Renders a small square badge displaying the "KATA" text in a contrasting
+ * colour scheme.  Inverts between dark/light backgrounds via Tailwind dark-mode
+ * utilities and includes a subtle hover scale animation.
+ *
+ * @example
+ * <Logo className="w-12 h-12" />
+ */
+
 import React from 'react';
+
 
 export const Logo: React.FC<{ className?: string }> = ({ className = '' }) => {
   return (

@@ -1,16 +1,35 @@
+/**
+ * @file vehicle.service.ts
+ * @description Business logic for vehicle inventory operations.
+ *
+ * Handles all vehicle-related operations including CRUD, search, purchase,
+ * and restocking.  Delegates data persistence to `VehicleRepository` and
+ * enforces domain business rules (e.g. non-negative prices, sufficient stock)
+ * before any data is written to the database.
+ */
+
 import { VehicleRepository } from '../repositories/vehicle.repository';
 import { createVehicleSchema, getVehiclesQuerySchema, searchVehiclesQuerySchema, updateVehicleSchema } from '../schemas/vehicle.schema';
 import { z } from 'zod';
 import { AppError } from '../errors/app-error';
 import { Prisma } from '@prisma/client';
 
+// Derive input types from Zod schemas so validation rules and types stay in sync
 type CreateVehicleInput = z.infer<typeof createVehicleSchema>;
 type GetVehiclesInput = z.infer<typeof getVehiclesQuerySchema>;
 type SearchVehiclesInput = z.infer<typeof searchVehiclesQuerySchema>;
 type UpdateVehicleInput = z.infer<typeof updateVehicleSchema>;
 
+/**
+ * Service class that encapsulates all vehicle inventory business rules.
+ *
+ * Each method performs domain validation before delegating to the repository.
+ * This ensures that invalid states (e.g. negative stock) cannot be persisted
+ * even if the validation middleware is bypassed.
+ */
 export class VehicleService {
   private vehicleRepository = new VehicleRepository();
+
 
   /**
    * Creates a new vehicle after executing business rules.
@@ -33,6 +52,7 @@ export class VehicleService {
       category: input.category,
       price: input.price,
       quantity: input.quantity,
+      imageUrl: input.imageUrl,
     });
   }
 

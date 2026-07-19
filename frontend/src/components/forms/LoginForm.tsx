@@ -1,3 +1,12 @@
+/**
+ * @file LoginForm.tsx
+ * @description User authentication login form component.
+ *
+ * Renders email and password fields. Validates input against `loginSchema`
+ * (Zod) before triggering the `onSubmit` callback. Displays validation errors
+ * and a loading state during submission.
+ */
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
