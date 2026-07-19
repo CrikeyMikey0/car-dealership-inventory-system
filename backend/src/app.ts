@@ -48,14 +48,23 @@ export function createApp(): Express {
   });
 
   // CORS configuration options
-  const allowedOrigins = env.FRONTEND_URL ? env.FRONTEND_URL.split(',').map(o => o.trim()) : [];
+  const allowedOrigins = env.FRONTEND_URL 
+    ? env.FRONTEND_URL.split(',').map(o => o.trim().replace(/\/+$/, '')) 
+    : [];
+
   const corsOptions = {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       // In non-production environments or if origin is not specified (e.g. same-origin, curl), allow it.
-      if (env.NODE_ENV !== 'production' || !origin || allowedOrigins.includes(origin)) {
+      if (env.NODE_ENV !== 'production' || !origin) {
+        return callback(null, true);
+      }
+
+      const normalizedOrigin = origin.replace(/\/+$/, '');
+      if (allowedOrigins.includes(normalizedOrigin)) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        console.warn(`[CORS Blocked] Origin "${origin}" is not in the allowed list:`, allowedOrigins);
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
       }
     },
     credentials: true,
